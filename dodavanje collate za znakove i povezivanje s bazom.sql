@@ -1,5 +1,4 @@
 ﻿
-
 SELECT name, collation_name FROM sys.databases;
 GO
 ALTER DATABASE db_aad629_terminprodaje SET SINGLE_USER WITH
