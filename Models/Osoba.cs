@@ -8,11 +8,10 @@ namespace TerminiProdajeVozila.Models
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Sifraosoba { get; set; }
-
-        public string Email { get; set; }
-        public string Ime { get; set; }
-        public string Prezime { get; set; }
+        public int? Sifraosoba { get; set; }
+        public string? Email { get; set; }
+        public string? Ime { get; set; }
+        public string? Prezime { get; set; }
 
     }
 }

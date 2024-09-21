@@ -23,21 +23,23 @@ builder.Services.AddDbContext<TerminiProdajeVozilaContext>(opcije =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    // moramo dodat u app.UseSwaggerUI(); kako bi mogli koristiti swagger UI
-    app.UseSwaggerUI(o =>
-    { o.ConfigObject.AdditionalItems.Add("requestSnippetsEnabled", true);
+//if (app.Environment.IsDevelopment())
+//{
+     app.UseSwagger();
+     // moramo dodat u app.UseSwaggerUI(); kako bi mogli koristiti swagger UI
+     app.UseSwaggerUI(o =>
+     {   
+        o.ConfigObject.AdditionalItems.Add("requestSnippetsEnabled", true);
         o.EnableTryItOutByDefault();
-        });
-    //// o =>
-    //{
-    //    o.ConfigObject.AdditionalItems.Add("requestSnippetsEnabled", true);
-    //    o.EnableTryItOutByDefault()
-    //    }); ovaj dio nam pokaze da maknemo u Swaggeru opciju Try it out, i da nam se prikazuju samo podaci, i da nam da opciju da kopiramo podatke
-    // pomaze nam da u Command Promptu mozemo koristiti curl komande
-}
+     });
+//}
+
+
+// o.ConfigObject.AdditionalItems.Add("requestSnippetsEnabled", true);
+// o.EnableTryItOutByDefault()
+// }); ovaj dio nam pokaze da maknemo u Swaggeru opciju Try it out, i da nam se prikazuju samo podaci, i da nam da opciju da kopiramo podatke
+// pomaze nam da u Command Promptu mozemo koristiti curl komande
+
 
 app.UseHttpsRedirection();
 
