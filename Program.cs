@@ -18,6 +18,15 @@ builder.Services.AddDbContext<TerminiProdajeVozilaContext>(opcije =>
     opcije.UseSqlServer(builder.Configuration.GetConnectionString("TerminiProdajeVozilaContext"));
 });
 
+// Svi se od svuda na sve moguæe naèine mogu spojitina naš API
+// Čitati https://code-maze.com/aspnetcore-webapi-best-practices/
+builder.Services.AddCors(opcije =>
+{
+    opcije.AddPolicy("CorsPolicy",
+        builder =>
+            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+    );
+});
 
 
 var app = builder.Build();
