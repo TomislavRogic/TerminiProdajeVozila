@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.SwaggerUI;
-using TerminiProdajeVozila.Data;
+﻿using TerminiProdajeVozila.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,14 +10,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// nakon builder.Services.AddSwaggerGen(); a prije var app = builder.Build(); dodati sljedeće linije koda kako bi se generirao swagger.json file i kako bi se mogao koristiti swagger UI
 // dodavanje baze podataka
 builder.Services.AddDbContext<TerminiProdajeVozilaContext>(opcije =>
 {
     opcije.UseSqlServer(builder.Configuration.GetConnectionString("TerminiProdajeVozilaContext"));
 });
 
-// Svi se od svuda na sve moguæe naèine mogu spojitina naš API
+// Svi se od svuda na sve moguæe nacine mogu spojiti na naš API
 // Čitati https://code-maze.com/aspnetcore-webapi-best-practices/
 builder.Services.AddCors(opcije =>
 {
@@ -26,7 +24,9 @@ builder.Services.AddCors(opcije =>
         builder =>
             builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
     );
+
 });
+
 
 
 var app = builder.Build();
@@ -34,26 +34,26 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-     app.UseSwagger();
-     // moramo dodat u app.UseSwaggerUI(); kako bi mogli koristiti swagger UI
-     app.UseSwaggerUI(o =>
-     {   
-        o.ConfigObject.AdditionalItems.Add("requestSnippetsEnabled", true);
-        o.EnableTryItOutByDefault();
-     });
+app.UseSwagger();
+app.UseSwaggerUI(o => {
+
+    o.ConfigObject.AdditionalItems.Add("requestSnippetsEnabled", true);
+    o.EnableTryItOutByDefault();
+
+});
 //}
-
-
-// o.ConfigObject.AdditionalItems.Add("requestSnippetsEnabled", true);
-// o.EnableTryItOutByDefault()
-// }); ovaj dio nam pokaze da maknemo u Swaggeru opciju Try it out, i da nam se prikazuju samo podaci, i da nam da opciju da kopiramo podatke
-// pomaze nam da u Command Promptu mozemo koristiti curl komande
-
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+// za potrebe produkcije
+app.UseStaticFiles();
+app.UseDefaultFiles();
+app.MapFallbackToFile("index.html");
+
+app.UseCors("CorsPolicy");
 
 app.Run();
