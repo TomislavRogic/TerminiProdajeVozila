@@ -6,7 +6,7 @@ namespace TerminiProdajeVozila.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class OsobaController: ControllerBase
+    public class OsobaController : ControllerBase
     {
         // dependency injection
         // 1. korak: dodati privatno polje _context tipa TerminiProdajeVozilaContext
@@ -34,7 +34,7 @@ namespace TerminiProdajeVozila.Controllers
         [HttpPost]
         public IActionResult Post(Osoba osoba)
         {
-            
+
             _context.Osobe.Add(osoba);
             _context.SaveChanges();
             return StatusCode(StatusCodes.Status201Created, osoba);
@@ -78,11 +78,11 @@ namespace TerminiProdajeVozila.Controllers
                 _context.Osobe.Remove(osobaIzBaze);
                 _context.SaveChanges();
 
-                return Ok("Uspjesno obrisano!"); 
+                return Ok("Uspjesno obrisano!");
             }
-            catch (Exception ex)
+            catch
             {
-                // Log the exception (ex) if necessary
+                // Log the exception if necessary
                 return StatusCode(StatusCodes.Status500InternalServerError, "Greska prilikom brisanja");
             }
         }
