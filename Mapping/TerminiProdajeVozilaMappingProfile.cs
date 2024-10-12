@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
-using TerminiProdajeVozila.Models.DTO;
 using TerminiProdajeVozila.Models;
-using TerminiProdajeVozila.Models.DTO.TerminiProdajeVozila.DTO;
-
-
-
-
+using TerminiProdajeVozila.Models.DTO;
 
 namespace TerminiProdajeVozila.Mapping
 {
@@ -13,10 +8,14 @@ namespace TerminiProdajeVozila.Mapping
     {
         public TerminiProdajeVozilaMappingProfile()
         {
-            // Kreiramo mapiranja: izvor, odredište
+            
+            // Mapiranje za Osoba
             CreateMap<Osoba, OsobaDTORead>();
             CreateMap<OsobaDTOInsertUpdate, Osoba>();
+            
+            // Mapiranje za Vozila
+            CreateMap<Vozila, VozilaDTORead>();
+            CreateMap<VozilaDTOInsertUpdate, Vozila>();
         }
     }
 }
-

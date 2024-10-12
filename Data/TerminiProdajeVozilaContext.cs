@@ -6,6 +6,7 @@ namespace TerminiProdajeVozila.Data
     public class TerminiProdajeVozilaContext(DbContextOptions<TerminiProdajeVozilaContext> opcije) : DbContext(opcije)
     {
         public DbSet<Osoba> Osobe { get; set; }
+        public DbSet<Vozila> Vozila { get; set; }
 
 
     }

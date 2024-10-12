@@ -8,21 +8,21 @@ namespace TerminiProdajeVozila.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class OsobaController : ControllerBase
+    public class VozilaController : ControllerBase
     {
         private readonly TerminiProdajeVozilaContext _context;
         private readonly IMapper _mapper;
 
-        public OsobaController(TerminiProdajeVozilaContext context, IMapper mapper)
+        public VozilaController(TerminiProdajeVozilaContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
         // RUTE
-        // Kontroler koji vraća sve osobe iz baze podataka
+        // Kontroler koji vraća sva vozila iz baze podataka
         [HttpGet]
-        public ActionResult<List<OsobaDTORead>> Get()
+        public ActionResult<List<VozilaDTORead>> Get()
         {
             if (!ModelState.IsValid)
             {
@@ -30,7 +30,7 @@ namespace TerminiProdajeVozila.Controllers
             }
             try
             {
-                return Ok(_mapper.Map<List<OsobaDTORead>>(_context.Osobe.ToList()));
+                return Ok(_mapper.Map<List<VozilaDTORead>>(_context.Vozila.ToList()));
             }
             catch (Exception ex)
             {
@@ -38,32 +38,34 @@ namespace TerminiProdajeVozila.Controllers
             }
         }
 
-        // Kontroler koji vraća jednu osobu iz baze podataka
-        [HttpGet("{id:int}")]
-        public ActionResult<OsobaDTORead> GetById(int id)
+        // Kontroler koji vraća jedno vozilo iz baze podataka prema šifri
+        [HttpGet]
+        [Route("{Sifravozila:int}")]
+        public ActionResult<VozilaDTORead> GetBySifravozila(int Sifravozila)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new { poruka = ModelState });
             }
+            Vozila? vozilo;
             try
             {
-                var osoba = _context.Osobe.Find(id);
-                if (osoba == null)
-                {
-                    return NotFound(new { poruka = "Osoba ne postoji u bazi" });
-                }
-                return Ok(_mapper.Map<OsobaDTORead>(osoba));
+                vozilo = _context.Vozila.Find(Sifravozila);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { poruka = ex.Message });
             }
+            if (vozilo == null)
+            {
+                return NotFound(new { poruka = "Vozilo ne postoji u bazi" });
+            }
+            return Ok(_mapper.Map<VozilaDTORead>(vozilo));
         }
 
-        // Kontroler za dodavanje nove osobe
+        // Kontroler za dodavanje novog vozila
         [HttpPost]
-        public IActionResult Post(OsobaDTOInsertUpdate dto)
+        public IActionResult Post(VozilaDTOInsertUpdate dto)
         {
             if (!ModelState.IsValid)
             {
@@ -71,10 +73,10 @@ namespace TerminiProdajeVozila.Controllers
             }
             try
             {
-                var osoba = _mapper.Map<Osoba>(dto);
-                _context.Osobe.Add(osoba);
+                var vozilo = _mapper.Map<Vozila>(dto);
+                _context.Vozila.Add(vozilo);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status201Created, _mapper.Map<OsobaDTORead>(osoba));
+                return StatusCode(StatusCodes.Status201Created, _mapper.Map<VozilaDTORead>(vozilo));
             }
             catch (Exception ex)
             {
@@ -82,9 +84,9 @@ namespace TerminiProdajeVozila.Controllers
             }
         }
 
-        // Kontroler za ažuriranje postojeće osobe
-        [HttpPut("{id:int}")]
-        public IActionResult Put(int id, OsobaDTOInsertUpdate dto)
+        // Kontroler za ažuriranje postojećeg vozila
+        [HttpPut("{Sifravozila:int}")]
+        public IActionResult Put(int Sifravozila, VozilaDTOInsertUpdate dto)
         {
             if (!ModelState.IsValid)
             {
@@ -92,16 +94,16 @@ namespace TerminiProdajeVozila.Controllers
             }
             try
             {
-                var osoba = _context.Osobe.Find(id);
-                if (osoba == null)
+                var vozilo = _context.Vozila.Find(Sifravozila);
+                if (vozilo == null)
                 {
-                    return NotFound(new { poruka = "Osoba ne postoji u bazi" });
+                    return NotFound(new { poruka = "Vozilo ne postoji u bazi" });
                 }
 
                 // Ažurirajte svojstva entiteta koristeći mapper
-                osoba = _mapper.Map(dto, osoba);
+                vozilo = _mapper.Map(dto, vozilo);
 
-                _context.Osobe.Update(osoba);
+                _context.Vozila.Update(vozilo);
                 _context.SaveChanges();
 
                 return Ok(new { poruka = "Uspješno promijenjeno" });
@@ -112,9 +114,9 @@ namespace TerminiProdajeVozila.Controllers
             }
         }
 
-        // Kontroler za brisanje osobe
-        [HttpDelete("{id:int}")]
-        public IActionResult Delete(int id)
+        // Kontroler za brisanje vozila
+        [HttpDelete("{Sifravozila:int}")]
+        public IActionResult Delete(int Sifravozila)
         {
             if (!ModelState.IsValid)
             {
@@ -122,13 +124,13 @@ namespace TerminiProdajeVozila.Controllers
             }
             try
             {
-                var osoba = _context.Osobe.Find(id);
-                if (osoba == null)
+                var vozilo = _context.Vozila.Find(Sifravozila);
+                if (vozilo == null)
                 {
-                    return NotFound(new { poruka = "Osoba ne postoji u bazi" });
+                    return NotFound(new { poruka = "Vozilo ne postoji u bazi" });
                 }
 
-                _context.Osobe.Remove(osoba);
+                _context.Vozila.Remove(vozilo);
                 _context.SaveChanges();
 
                 return Ok(new { poruka = "Uspješno obrisano" });
@@ -137,7 +139,6 @@ namespace TerminiProdajeVozila.Controllers
             {
                 return BadRequest(new { poruka = ex.Message });
             }
-
         }
     }
 }
