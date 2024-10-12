@@ -1,5 +1,6 @@
 ﻿using TerminiProdajeVozila.Data;
 using Microsoft.EntityFrameworkCore;
+using TerminiProdajeVozila.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,8 @@ builder.Services.AddCors(opcije =>
 
 });
 
-
+// automapper
+builder.Services.AddAutoMapper(typeof(TerminiProdajeVozilaMappingProfile));
 
 var app = builder.Build();
 

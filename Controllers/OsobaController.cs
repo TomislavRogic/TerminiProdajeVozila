@@ -1,89 +1,132 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using TerminiProdajeVozila.Data;
 using TerminiProdajeVozila.Models;
+using TerminiProdajeVozila.Models.DTO;
+using TerminiProdajeVozila.Models.DTO.TerminiProdajeVozila.DTO;
 
 namespace TerminiProdajeVozila.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class OsobaController : ControllerBase
+    public class OsobaController(TerminiProdajeVozilaContext context, IMapper mapper): TerminiProdajeVozilaController(context, mapper)
     {
-        // dependency injection
-        // 1. korak: dodati privatno polje _context tipa TerminiProdajeVozilaContext
 
-        private readonly TerminiProdajeVozilaContext _context;
 
-        // dependency injection
-        // 2. korak: dodati konstruktor koji prima TerminiProdajeVozilaContext
-        // proslijedis instancu kroz konstruktor
-        public OsobaController(TerminiProdajeVozilaContext context)
-        {
-            _context = context;
-        }
-
+        // RUTE
         // ovo je jedan kontroler koji vraca sve osobe iz baze podataka
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<List<OsobaDTORead>> Get()
         {
-            return Ok(_context.Osobe);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { poruka = ModelState });
+            }
+            try
+            {
+                return Ok(_mapper.Map<List<OsobaDTORead>>(_context.Osobe));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { poruka = ex.Message });
+            }
         }
-
         // druga ruta
         //  ovo je jedan kontroler koji vraca jednu osobu iz baze podataka
         // ova ruta koristi se kao INSERT INTO
         [HttpPost]
-        public IActionResult Post(Osoba osoba)
+        public IActionResult Post(OsobaDTOInsertUpdate dto)
         {
-
-            _context.Osobe.Add(osoba);
-            _context.SaveChanges();
-            return StatusCode(StatusCodes.Status201Created, osoba);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { poruka = ModelState });
+            }
+            try
+            {
+                var osoba = _mapper.Map<Osoba>(dto);
+                _context.Osobe.Add(osoba);
+                _context.SaveChanges();
+                return StatusCode(StatusCodes.Status201Created, _mapper.Map<OsobaDTORead>(osoba));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { poruka = ex.Message });
+            }
+           
         }
         // s rutom put azuriramo podatke
         [HttpPut]
         [Route("{Sifraosoba:int}")]
         [Produces("application/json")]
-        public IActionResult Put(int Sifraosoba, Osoba osoba)
+        public IActionResult Put(int Sifraosoba, OsobaDTOInsertUpdate osoba)
         {
-            var osobaIzBaze = _context.Osobe.Find(Sifraosoba);
-            if (osobaIzBaze == null)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return BadRequest(new { poruka = ModelState });
             }
+            try
+            {
+                Osoba? e;
+                try
+                {
+                    e = _context.Osobe.Find(Sifraosoba);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { poruka = ex.Message });
+                }
+                if (e == null)
+                {
+                    return NotFound(new { poruka = "Osoba ne postoji u bazi" });
+                }
 
-            // Ažurirajte svojstva entiteta
-            osobaIzBaze.Email = osoba.Email;
-            osobaIzBaze.Ime = osoba.Ime;
-            osobaIzBaze.Prezime = osoba.Prezime;
+                // Ažurirajte svojstva entiteta koristeći mapper
+                e = _mapper.Map(osoba, e);
 
-            // Spremite promjene u bazu podataka
-            _context.SaveChanges();
+                _context.Osobe.Update(e);
+                _context.SaveChanges();
 
-            return Ok("Uspjesno promjenjeno");
+                return Ok(new { poruka = "Uspješno promjenjeno" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { poruka = ex.Message });
+            }
         }
-
         // delete sifre
         [HttpDelete]
         [Route("{Sifraosoba:int}")]
+        [Produces("application/json")]
         public IActionResult Delete(int Sifraosoba)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { poruka = ModelState });
+            }
             try
             {
-                var osobaIzBaze = _context.Osobe.Find(Sifraosoba);
-                if (osobaIzBaze == null)
+                Osoba? e;
+                try
                 {
-                    return NotFound();
+                    e = _context.Osobe.Find(Sifraosoba);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { poruka = ex.Message });
+                }
+                if (e == null)
+                {
+                    return NotFound(new { poruka = "Osoba ne postoji u bazi" });
                 }
 
-                _context.Osobe.Remove(osobaIzBaze);
+                _context.Osobe.Remove(e);
                 _context.SaveChanges();
 
-                return Ok("Uspjesno obrisano!");
+                return Ok(new { poruka = "Uspješno obrisano" });
             }
-            catch
+            catch (Exception ex)
             {
-                // Log the exception if necessary
-                return StatusCode(StatusCodes.Status500InternalServerError, "Greska prilikom brisanja");
+                return BadRequest(new { poruka = ex.Message });
             }
         }
 
@@ -92,9 +135,27 @@ namespace TerminiProdajeVozila.Controllers
 
         [HttpGet]
         [Route("{Sifraosoba:int}")]
-        public IActionResult GetBy(int Sifraosoba)
+        public ActionResult<OsobaDTORead> GetBy(int Sifraosoba)
         {
-            return Ok(_context.Osobe.Find(Sifraosoba));
+            if (!ModelState.IsValid)
+
+            {
+                return BadRequest(new { poruka = ModelState });
+            }
+            Osoba? e;
+            try 
+            { 
+            e = _context.Osobe.Find(Sifraosoba); 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { poruka = ex.Message });
+            }
+            if (e == null)
+            {
+                return NotFound(new {poruka= "Osoba ne postoji u bazi"});
+            }
+            return Ok(_mapper.Map<OsobaDTORead>(e));
         }
 
 
