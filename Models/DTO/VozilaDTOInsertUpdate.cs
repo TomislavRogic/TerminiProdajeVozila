@@ -7,7 +7,8 @@ namespace TerminiProdajeVozila.Models.DTO
         [StringLength(100, MinimumLength = 1, ErrorMessage = "Marka mora biti između 1 i 100 znakova")]
         string Marka,
 
-        [StringLength(100, ErrorMessage = "Opis vozila mora biti do 100 znakova")]
+        [Required(ErrorMessage = "Opis je obavezan")]
+        [StringLength(1000, MinimumLength = 5,ErrorMessage = "Opis vozila mora biti do 1000 znakova")]
         string? Opisvozila,
 
         [Required(ErrorMessage = "Cijena je obavezna")]
