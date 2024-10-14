@@ -8,6 +8,9 @@ import Pocetna from './pages/Pocetna';
 import OsobePregled from './pages/osobe/OsobePregled';
 import OsobePromjena from './pages/osobe/OsobePromjena';
 import OsobeDodaj from './pages/osobe/OsobeDodaj';
+import VozilaPregled from './pages/vozila/VozilaPregled';
+import VozilaPromjena from './pages/vozila/VozilaPromjena';
+import VozilaDodaj from './pages/vozila/VozilaDodaj';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
       <Route path={RouteNames.OSOBA_PREGLED} element ={<OsobePregled/>} />
       <Route path={RouteNames.OSOBA_DODAJ} element ={<OsobeDodaj/>} />
       <Route path={RouteNames.OSOBA_PROMJENA} element ={<OsobePromjena/>} />
+      <Route path={RouteNames.VOZILA_PREGLED} element ={<VozilaPregled/>} />
+      <Route path={RouteNames.VOZILA_DODAJ} element ={<VozilaDodaj/>} />
+      <Route path={RouteNames.VOZILA_PROMJENA} element ={<VozilaPromjena/>} />
       </Routes>
 
       <hr/>
