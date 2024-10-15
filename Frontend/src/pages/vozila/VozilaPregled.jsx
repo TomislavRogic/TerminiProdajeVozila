@@ -44,7 +44,7 @@ export default function VozilaPregled() {
 
     return (
         <>
-            <Link to={RouteNames.VOZILA_DODAJ}className="btn btn-success siroko">Dodaj novo vozilo </Link>
+            <Link to={RouteNames.VOZILA_DODAJ} className="btn btn-success siroko">Dodaj novo vozilo </Link>
             <Table striped bordered hover responsive>
                 <thead>
                     <tr>

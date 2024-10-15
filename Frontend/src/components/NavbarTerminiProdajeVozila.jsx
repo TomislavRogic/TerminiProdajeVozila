@@ -26,7 +26,7 @@ export default function NavbarTerminiProdajeVozila() {
               <NavDropdown.Item 
               onClick={()=>navigate(RouteNames.OSOBA_PREGLED)}
               >Osobe</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
+              <NavDropdown.Item onClick={() => navigate(RouteNames.VOZILA_PREGLED)}>
                 Vozila
               </NavDropdown.Item>
               <NavDropdown.Item href="#action/3.3">Termini</NavDropdown.Item>

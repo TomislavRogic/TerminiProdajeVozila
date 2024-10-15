@@ -22,21 +22,40 @@ async function brisanje(sifra) {
 
 async function dodaj(osoba) {
     return await HttpService.post('/Osoba', osoba)
-        .then(() => {
-            return { greska: false, poruka: 'Dodano' };
+        .then((odgovor) => {
+            return { greska: false, poruka: odgovor.data };
         })
-        .catch(() => {
-            return { greska: true, poruka: 'Problem kod dodavanja osobe' };
+        .catch((e) => {
+            switch (e.status) {
+                case 400:
+                    let poruke = '';
+                    for (const kljuc in e.response.data.errors) {
+                        poruke += kljuc + ': ' + e.response.data.errors[kljuc][0] + '\n';
+                    }
+                    return { greska: true, poruka: poruke };
+                default:
+                    return { greska: true, poruka: 'Osoba se ne može dodati!' };
+            }
         });
 }
 
 async function promjena(sifra, osoba) {
     return await HttpService.put('/Osoba/' + sifra, osoba)
-        .then(() => {
-            return { greska: false, poruka: 'Promijenjeno' };
+        .then((odgovor) => {
+            return { greska: false, poruka: odgovor.data };
         })
-        .catch(() => {
-            return { greska: true, poruka: 'Problem kod promjene osobe' };
+        .catch((e) => {
+            switch (e.status) {
+                case 400:
+                    let poruke = '';
+                    for (const kljuc in e.response.data.errors) {
+                        poruke += kljuc + ': ' + e.response.data.errors[kljuc][0] + '\n';
+                    }
+                    console.log(poruke);
+                    return { greska: true, poruka: poruke };
+                default:
+                    return { greska: true, poruka: 'Osoba se ne može promijeniti!' };
+            }
         });
 }
 
