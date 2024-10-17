@@ -47,7 +47,7 @@ namespace TerminiProdajeVozila.Controllers
             {
                 return BadRequest(new { poruka = ModelState });
             }
-            Vozila? vozilo;
+            Vozilo? vozilo;
             try
             {
                 vozilo = _context.Vozila.Find(Sifravozila);
@@ -73,7 +73,7 @@ namespace TerminiProdajeVozila.Controllers
             }
             try
             {
-                var vozilo = _mapper.Map<Vozila>(dto);
+                var vozilo = _mapper.Map<Vozilo>(dto);
                 _context.Vozila.Add(vozilo);
                 _context.SaveChanges();
                 return StatusCode(StatusCodes.Status201Created, _mapper.Map<VozilaDTORead>(vozilo));

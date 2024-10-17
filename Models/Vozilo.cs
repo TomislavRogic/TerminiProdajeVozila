@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TerminiProdajeVozila.Models
 {
-    public class Vozila
+    public class Vozilo
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -12,6 +12,6 @@ namespace TerminiProdajeVozila.Models
         public string? Opisvozila { get; set; }
         public decimal? Cijena { get; set; }
 
-
+        
     }
 }
