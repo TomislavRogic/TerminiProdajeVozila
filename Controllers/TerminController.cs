@@ -212,5 +212,90 @@ namespace TerminiProdajeVozila.Controllers
                 return BadRequest(new { poruka = ex.Message });
             }
         }
+        [HttpGet]
+        [Route("Vozilo/{sifravozila:int}")]
+        public ActionResult<List<TerminDTORead>> GetTerminiByVozilo(int sifravozila)
+        {
+            if (!ModelState.IsValid || sifravozila <= 0)
+            {
+                return BadRequest(new { poruka = ModelState });
+            }
+            try
+            {
+                var termini = _context.Termini
+                    .Include(t => t.Vozilo)
+                    .Include(t => t.Osoba)
+                    .Where(t => t.Vozilo.Sifravozila == sifravozila)
+                    .ToList();
+
+                if (termini == null || termini.Count == 0)
+                {
+                    return NotFound(new { poruka = "Ne postoji termin za vozilo s šifrom " + sifravozila + " u bazi" });
+                }
+
+                var terminiDTO = _mapper.Map<List<TerminDTORead>>(termini);
+                return Ok(terminiDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { poruka = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("Vozilo")]
+        public IActionResult PostVozilo(VozilaDTOInsertUpdate dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { poruka = ModelState });
+            }
+
+            try
+            {
+                var vozilo = _mapper.Map<Vozilo>(dto);
+                _context.Vozila.Add(vozilo);
+                _context.SaveChanges();
+                return StatusCode(StatusCodes.Status201Created, _mapper.Map<VozilaDTORead>(vozilo));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { poruka = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("Vozilo/{sifravozila:int}")]
+        public IActionResult DeleteVozilo(int sifravozila)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { poruka = ModelState });
+            }
+            try
+            {
+                var vozilo = _context.Vozila
+                    .Include(v => v.Termini)
+                    .FirstOrDefault(v => v.Sifravozila == sifravozila);
+
+                if (vozilo == null)
+                {
+                    return NotFound(new { poruka = "Ne postoji vozilo s šifrom " + sifravozila + " u bazi" });
+                }
+
+                if (vozilo.Termini.Any())
+                {
+                    return BadRequest(new { poruka = "Vozilo ima povezane termine i ne može se obrisati" });
+                }
+
+                _context.Vozila.Remove(vozilo);
+                _context.SaveChanges();
+                return Ok(new { poruka = "Uspješno obrisano vozilo iz svih termina" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { poruka = ex.Message });
+            }
+        }
     }
-    }
+}

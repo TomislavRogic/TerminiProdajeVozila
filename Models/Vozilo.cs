@@ -12,6 +12,7 @@ namespace TerminiProdajeVozila.Models
         public string? Opisvozila { get; set; }
         public decimal? Cijena { get; set; }
 
-        
+        public ICollection<Termin> Termini { get; set; } // Dodano navigacijsko svojstvo
+
     }
 }
