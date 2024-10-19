@@ -29,7 +29,7 @@ export default function NavbarTerminiProdajeVozila() {
               <NavDropdown.Item onClick={() => navigate(RouteNames.VOZILA_PREGLED)}>
                 Vozila
               </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Termini</NavDropdown.Item>
+              <NavDropdown.Item onClick={() => navigate(RouteNames.TERMINI_PREGLED)}>Termini</NavDropdown.Item>
              
             </NavDropdown>
           </Nav>

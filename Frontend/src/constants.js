@@ -8,7 +8,12 @@ OSOBA_PROMJENA: '/osobe/:sifra',
 
 VOZILA_PREGLED: '/vozila',
 VOZILA_DODAJ: '/vozila/dodaj',
-VOZILA_PROMJENA: '/vozila/:sifravozila'
+VOZILA_PROMJENA: '/vozila/:sifravozila',
+
+
+TERMINI_PREGLED: '/termini',
+TERMINI_DODAJ: '/termini/dodaj',
+TERMINI_PROMJENA: '/termini/:sifratermina'
 
 }
 
