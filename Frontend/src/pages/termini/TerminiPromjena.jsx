@@ -10,12 +10,19 @@ export default function TerminiPromjena() {
     const navigate = useNavigate();
     const routeParams = useParams();
 
-    const [vozilo, setVozila] = useState([]);
+    const [vozila, setVozila] = useState([]); 
+    const [osobe, setOsobe] = useState([]); 
     const [termin, setTermin] = useState({});
 
     async function dohvatiVozila() {
         const odgovor = await VozilaService.get();
         setVozila(odgovor.poruka);
+    }
+
+    async function dohvatiOsobe() {
+        const odgovor = await OsobeService.get();
+        console.log(odgovor.poruka); // Dodano za provjeru strukture podataka
+        setOsobe(odgovor.poruka);
     }
 
     async function dohvatiTermin() {
@@ -30,6 +37,7 @@ export default function TerminiPromjena() {
 
     async function dohvatiInicialnePodatke() {
         await dohvatiVozila();
+        await dohvatiOsobe();
         await dohvatiTermin();
     }
 
@@ -38,8 +46,8 @@ export default function TerminiPromjena() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    async function promjena(podaci) {
-        const odgovor = await Service.promjena(routeParams.sifratermina, podaci);
+    async function promjena(e) {
+        const odgovor = await Service.promjena(routeParams.sifratermina, e);
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;
@@ -52,9 +60,9 @@ export default function TerminiPromjena() {
 
         const podaci = new FormData(e.target);
         promjena({
-            sifravozila: parseInt(podaci.get('sifravozila')),
-            sifraosoba: parseInt(podaci.get('sifraosoba')),
-            vrijemetermina: moment.utc(podaci.get('vrijemetermina'))
+            Vozila: parseInt(podaci.get('sifravozila')),
+            Osobe: parseInt(podaci.get('sifraosoba')),
+            Vrijemetermina: moment.utc(podaci.get('vrijemetermina'))
         });
     }
 
@@ -63,12 +71,24 @@ export default function TerminiPromjena() {
             <h2>Mjenjanje podataka termina</h2>
             <Form onSubmit={obradiSubmit}>
                 <Form.Group controlId="sifravozila">
-                    <Form.Label>Sifra Vozila</Form.Label>
-                    <Form.Control type="select" name="sifravozila" required defaultValue={termin.sifravozila} />
+                    <Form.Label>Vozilo</Form.Label>
+                    <Form.Control as="select" name="sifravozila" required defaultValue={termin.Vozila}>
+    {vozila.map((vozilo) => (
+        <option key={vozilo.sifravozila} value={vozilo.sifravozila}>
+            {vozilo.marka}
+        </option>
+    ))}
+</Form.Control>
                 </Form.Group>
-                <Form.Group controlId="osobaIme">
-                    <Form.Label>Sifra osobe</Form.Label>
-                    <Form.Control type="select" name="sifraosoba" required defaultValue={termin.sifraosoba} />
+                <Form.Group controlId="sifraosoba">
+                    <Form.Label>Osoba</Form.Label>
+                    <Form.Control as="select" name="sifraosoba" required defaultValue={termin.Osobe}>
+    {osobe.map((osoba) => (
+        <option key={osoba.sifraosoba} value={osoba.sifraosoba}>
+            {osoba.ime} {osoba.prezime} 
+        </option>
+    ))}
+</Form.Control>
                 </Form.Group>
                 <Form.Group controlId="vrijemetermina">
                     <Form.Label>Datum termina</Form.Label>
