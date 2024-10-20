@@ -1,80 +1,66 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { RouteNames } from "../../constants";
-import TerminiService from "../../services/TerminiService";
+import VozilaService from "../../services/VozilaService";
 import { useEffect, useState } from "react";
-
-export default function TerminiPromjena() {
+export default function VozilaPromjena() {
     const navigate = useNavigate();
     const routeParams = useParams();
-    const [termin, setTermin] = useState({});
-    const [error, setError] = useState(null); // State for storing error messages
-
-    async function dohvatiTermin() {
-        try {
-            const odgovor = await TerminiService.getBySifra(routeParams.sifratermina);
-            if (odgovor.greska) {
-                throw new Error(odgovor.poruka);
-            }
-            setTermin(odgovor.poruka);
-        } catch (err) {
-            setError(err.message);
+    const [vozilo, setVozilo] = useState({});
+    async function dohvatiVozilo() {
+        const odgovor = await VozilaService.getBySifra(routeParams.sifravozila);
+        if (odgovor.greska) {
+            alert(odgovor.poruka);
+            return;
         }
+        setVozilo(odgovor.poruka);
     }
-
     useEffect(() => {
-        dohvatiTermin();
+        dohvatiVozilo();
     }, []);
-
-    async function promjena(podaci) {
-        try {
-            const odgovor = await TerminiService.promjena(routeParams.sifratermina, podaci);
-            if (odgovor.greska) {
-                throw new Error(odgovor.poruka);
-            }
-            navigate(RouteNames.TERMINI_PREGLED);
-        } catch (err) {
-            setError(err.message);
+    async function promjena(e) {
+        const odgovor = await VozilaService.promjena(routeParams.sifravozila, e);
+        if (odgovor.greska) {
+            alert(odgovor.poruka);
+            return;
         }
+        navigate(RouteNames.VOZILA_PREGLED);
     }
-
     function obradiSubmit(e) { 
         e.preventDefault();
         const podaci = new FormData(e.target);
         promjena({
-            Marka: podaci.get('marka'),
-            Opisvozila: podaci.get('opisvozila'),
-            Cijena: parseFloat(podaci.get('cijena'))
+            marka: podaci.get('marka'),
+            opisvozila: podaci.get('opisvozila'),
+            cijena: podaci.get('cijena')
         });
     }
-
     return (
         <>
-            <h2>Promjena Termina</h2>
-            {error && <div className="alert alert-danger">{error}</div>} {/* Display error message */}
+            <>Promjena Vozila</>
             <Form onSubmit={obradiSubmit}>
                 <Form.Group controlId="marka">
                     <Form.Label>Marka</Form.Label>
-                    <Form.Control type="text" name="marka" required defaultValue={termin.Marka} />
+                    <Form.Control type="text" name="marka" required defaultValue={vozilo.marka} />
                 </Form.Group>
                 <Form.Group controlId="opisvozila">
                     <Form.Label>Opis Vozila</Form.Label>
-                    <Form.Control type="text" name="opisvozila" required defaultValue={termin.Opisvozila} />
+                    <Form.Control type="text" name="opisvozila" required defaultValue={vozilo.opisvozila} />
                 </Form.Group>
                 <Form.Group controlId="cijena">
                     <Form.Label>Cijena</Form.Label>
-                    <Form.Control type="number" step="0.01" name="cijena" required defaultValue={termin.Cijena} />
+                    <Form.Control type="text" name="cijena" required defaultValue={vozilo.cijena} />
                 </Form.Group>
                 <hr />
                 <Row>
                     <Col xs={6}>
-                        <Link to={RouteNames.TERMINI_PREGLED} className="btn btn-danger siroko">
+                        <Link to={RouteNames.VOZILA_PREGLED} className="btn btn-danger siroko">
                             Odustani
                         </Link>
                     </Col>
                     <Col xs={6}>
                         <Button variant="primary" type="submit" className="siroko">
-                            Promjeni termin
+                            Promjeni vozilo
                         </Button>
                     </Col>
                 </Row>
