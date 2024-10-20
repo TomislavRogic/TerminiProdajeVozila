@@ -62,7 +62,7 @@ export default function TerminiPromjena() {
         promjena({
             Vozila: parseInt(podaci.get('sifravozila')),
             Osobe: parseInt(podaci.get('sifraosoba')),
-            Vrijemetermina: moment.utc(podaci.get('vrijemetermina'))
+            Vrijemetermina: podaci.get('vrijemetermina')
         });
     }
 
