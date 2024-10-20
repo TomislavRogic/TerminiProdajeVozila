@@ -47,7 +47,7 @@ async function getBySifra(sifratermina){
                 })
         }
         async function promjena(sifratermina, Termin) {
-            return await HttpService.put(`/Termin/` + sifratermina, Termin)
+            return await HttpService.put('/Termin/' + sifratermina, Termin)
                 .then((odgovor) => {
                     return { greska: false, poruka: odgovor.data };
                 })

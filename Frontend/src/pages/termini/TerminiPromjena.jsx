@@ -9,7 +9,7 @@ export default function TerminiPromjena() {
     const navigate = useNavigate();
     const routeParams = useParams();
 
-    const [vozila, setVozila] = useState([]);
+    const [vozilo, setVozila] = useState([]);
     const [termin, setTermin] = useState({});
 
     async function dohvatiVozila() {
@@ -51,8 +51,8 @@ export default function TerminiPromjena() {
 
         const podaci = new FormData(e.target);
         promjena({
-            vozilaMarka: podaci.get('vozilaMarka'),
-            osobaIme: podaci.get('osobaIme'),
+            sifravozila: parseInt(podaci.get('sifravozila')),
+            sifraosoba: parseInt(podaci.get('sifraosoba')),
             vrijemetermina: podaci.get('vrijemetermina')
         });
     }
@@ -61,16 +61,16 @@ export default function TerminiPromjena() {
         <>
             <h2>Mjenjanje podataka termina</h2>
             <Form onSubmit={obradiSubmit}>
-                <Form.Group controlId="vozilaMarka">
-                    <Form.Label>Marka</Form.Label>
-                    <Form.Control type="text" name="vozilaMarka" required defaultValue={termin.vozilaMarka} />
+                <Form.Group controlId="sifravozila">
+                    <Form.Label>Sifra Vozila</Form.Label>
+                    <Form.Control type="select" name="sifravozila" required defaultValue={termin.sifravozila} />
                 </Form.Group>
                 <Form.Group controlId="osobaIme">
-                    <Form.Label>Ime osobe</Form.Label>
-                    <Form.Control type="text" name="osobaIme" required defaultValue={termin.osobaIme} />
+                    <Form.Label>Sifra osobe</Form.Label>
+                    <Form.Control type="select" name="sifraosoba" required defaultValue={termin.sifraosoba} />
                 </Form.Group>
                 <Form.Group controlId="vrijemetermina">
-                    <Form.Label>Datum</Form.Label>
+                    <Form.Label>Datum termina</Form.Label>
                     <Form.Control type="date" name="vrijemetermina" required defaultValue={termin.vrijemetermina} />
                 </Form.Group>
                 <hr />
