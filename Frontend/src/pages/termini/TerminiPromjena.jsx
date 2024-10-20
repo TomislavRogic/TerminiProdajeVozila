@@ -75,7 +75,7 @@ export default function TerminiPromjena() {
                     <Form.Control as="select" name="sifravozila" required defaultValue={termin.Vozila}>
     {vozila.map((vozilo) => (
         <option key={vozilo.sifravozila} value={vozilo.sifravozila}>
-            {vozilo.marka}
+            {vozilo.sifravozila}
         </option>
     ))}
 </Form.Control>
@@ -85,7 +85,7 @@ export default function TerminiPromjena() {
                     <Form.Control as="select" name="sifraosoba" required defaultValue={termin.Osobe}>
     {osobe.map((osoba) => (
         <option key={osoba.sifraosoba} value={osoba.sifraosoba}>
-            {osoba.ime} {osoba.prezime} 
+            {osoba.sifraosoba} 
         </option>
     ))}
 </Form.Control>
