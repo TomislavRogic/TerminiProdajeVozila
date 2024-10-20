@@ -33,7 +33,7 @@ function App() {
           <Route path={RouteNames.TERMINI_PREGLED} element={<TerminiPregled />} />
           <Route path={RouteNames.TERMINI_DODAJ} element={<TerminiDodaj />} />
           <Route path={RouteNames.TERMINI_PROMJENA} element={<TerminiPromjena />} />
-          
+         
           
         </Routes>
         <hr />

@@ -56,7 +56,7 @@ export default function TerminiDodaj() {
             onChange={(e) => { setVoziloSifra(e.target.value) }}
           >
             {vozila && vozila.map((v, index) => (
-              <option key={index} value={v.sifra}>
+              <option key={index} value={v.voziloSifra}>
                 {v.naziv}
               </option>
             ))}

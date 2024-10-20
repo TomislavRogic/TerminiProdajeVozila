@@ -4,6 +4,7 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import Service from "../../services/TerminiService";
 import { RouteNames } from "../../constants";
 import VozilaService from "../../services/VozilaService";
+import moment from "moment";
 
 export default function TerminiPromjena() {
     const navigate = useNavigate();
@@ -53,7 +54,7 @@ export default function TerminiPromjena() {
         promjena({
             sifravozila: parseInt(podaci.get('sifravozila')),
             sifraosoba: parseInt(podaci.get('sifraosoba')),
-            vrijemetermina: podaci.get('vrijemetermina')
+            vrijemetermina: moment.utc(podaci.get('vrijemetermina'))
         });
     }
 
