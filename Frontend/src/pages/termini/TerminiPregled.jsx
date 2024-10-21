@@ -21,6 +21,18 @@ export default function TerminiPregled() {
         .catch((e)=>{console.log(e)});
     }
 
+    async function dohvatiOsobe() {
+        await OsobaService.get()
+            .then((odgovor) => {
+                if (!odgovor.greska) {
+                    // Ovdje možete postaviti podatke o osobama
+                    console.log(odgovor.poruka);
+                }
+            })
+            .catch((e) => {
+                console.error("Problem kod dohvaćanja osoba:", e);
+            });
+    }
     async function obrisiTermin(sifratermina) {
         
             const odgovor = await Service.obrisi(sifratermina);
@@ -40,7 +52,7 @@ export default function TerminiPregled() {
 
     return (
         <Container>
-            <Link to={RouteNames.TERMIN_NOVI} className="btn btn-success siroko">
+            <Link to={RouteNames.TERMINI_DODAJ} className="btn btn-success siroko">
                 <IoIosAdd 
                 size={25}
                  /> Dodaj

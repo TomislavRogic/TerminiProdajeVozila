@@ -3,88 +3,114 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import TerminiService from '../../services/TerminiService';
 import VozilaService from '../../services/VozilaService';
+import OsobaService from '../../services/OsobaService';
 import { RouteNames } from '../../constants';
 
 export default function TerminiDodaj() {
   const navigate = useNavigate();
   const [vozila, setVozila] = useState([]);
-  const [voziloSifra, setVoziloSifra] = useState(0);
+  const [osobe, setOsobe] = useState([]);
+  const [sifravozila, setVoziloSifra] = useState(0);
+  const [sifraosoba, setOsobaSifra] = useState(0);
+  const [vrijemeTermina, setVrijemeTermina] = useState('');
 
   async function dohvatiVozila() {
     const odgovor = await VozilaService.get();
     setVozila(odgovor.poruka);
-    setVoziloSifra(odgovor.poruka[0].sifra);
+    if (odgovor.poruka.length > 0) {
+      setVoziloSifra(odgovor.poruka[0].sifra);
+    }
+  }
+
+  async function dohvatiOsobe() {
+    const odgovor = await OsobaService.get();
+    setOsobe(odgovor.poruka);
+    if (odgovor.poruka.length > 0) {
+      setOsobaSifra(odgovor.poruka[0].sifra);
+    }
   }
 
   useEffect(() => {
     dohvatiVozila();
+    dohvatiOsobe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function dodaj(e) {
-    const odgovor = await TerminiService.dodaj(e);
+  async function dodaj(termin) {
+    console.log("Podaci koji se šalju:", termin); // Dodano za provjeru
+    const odgovor = await TerminiService.dodaj(termin);
     if (odgovor.greska) {
       alert(odgovor.poruka);
       return;
     }
-    navigate(RouteNames.VOZILA_PREGLED);
-  }
+    navigate(RouteNames.TERMINI_PREGLED);
+}
 
-  function obradiSubmit(e) {
-    e.preventDefault();
-    const podaci = new FormData(e.target);
-    dodaj({
-      naziv: podaci.get('naziv'),
-      voziloSifra: parseInt(voziloSifra),
-      predavac: podaci.get('predavac'),
-      maksimalnopolaznika: parseInt(podaci.get('maksimalnopolaznika'))
-    });
-  }
+function obradiSubmit(e) {
+  e.preventDefault();
+  const podaci = e.target.elements;
+  dodaj({
+    Vozila: parseInt(sifravozila), // Koristi ispravno stanje
+    Osobe: parseInt(sifraosoba),   // Koristi ispravno stanje
+    Vrijemetermina: podaci.vrijemetermina.value // Vrijeme u ispravnom formatu
+  });
+}
 
   return (
     <>
-      Dodavanje novog termina
-
-      <Form onSubmit={obradiSubmit}>
-        <Form.Group controlId="naziv">
-          <Form.Label>Naziv</Form.Label>
-          <Form.Control type="text" name="naziv" required />
-        </Form.Group>
-        <Form.Group className='mb-3' controlId='vozilo'>
-          <Form.Label>Vozilo</Form.Label>
-          <Form.Select 
-            onChange={(e) => { setVoziloSifra(e.target.value) }}
-          >
-            {vozila && vozila.map((v, index) => (
-              <option key={index} value={v.voziloSifra}>
-                {v.naziv}
-              </option>
-            ))}
-          </Form.Select>
-        </Form.Group>
-        <Form.Group controlId="predavac">
-          <Form.Label>Predavač</Form.Label>
-          <Form.Control type="text" name="predavac" required />
-        </Form.Group>
-        <Form.Group controlId="maksimalnopolaznika">
-          <Form.Label>Maksimalno polaznika</Form.Label>
-          <Form.Control type="number" name="maksimalnopolaznika" min={5} max={30} />
-        </Form.Group>
-        <hr />
-        <Row>
-          <Col xs={6} sm={6} md={3} lg={6} xl={6} xxl={6}>
-            <Link to={RouteNames.VOZILA_PREGLED}
-              className="btn btn-danger siroko">
-              Odustani
-            </Link>
-          </Col>
-          <Col xs={6} sm={6} md={9} lg={6} xl={6} xxl={6}>
-            <Button variant="primary" type="submit" className="siroko">
-              Dodaj novi termin
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+      <Container>
+        <h3>Dodavanje novog termina</h3>
+        <Form onSubmit={obradiSubmit}>
+          <Form.Group controlId="vozilo" className="mb-3">
+            <Form.Label>Vozilo</Form.Label>
+            <Form.Select 
+              onChange={(e) => setVoziloSifra(e.target.value)}
+              required
+            >
+              {vozila && vozila.map((v, index) => (
+                <option key={index} value={v.sifra}>
+                  {v.naziv}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <Form.Group controlId="osoba" className="mb-3">
+            <Form.Label>Osoba</Form.Label>
+            <Form.Select 
+              onChange={(e) => setOsobaSifra(e.target.value)}
+              required
+            >
+              {osobe && osobe.map((o, index) => (
+                <option key={index} value={o.sifra}>
+                  {o.ime} {o.prezime}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+          <Form.Group controlId="vrijemetermina" className="mb-3">
+            <Form.Label>Vrijeme termina</Form.Label>
+            <Form.Control 
+              type="datetime-local" 
+              name="vrijemetermina"
+              onChange={(e) => setVrijemeTermina(e.target.value)}
+              required 
+            />
+          </Form.Group>
+          <hr />
+          <Row>
+            <Col xs={6}>
+              <Link to={RouteNames.TERMINI_PREGLED} className="btn btn-danger siroko">
+                Odustani
+              </Link>
+            </Col>
+            <Col xs={6}>
+              <Button variant="primary" type="submit" className="siroko">
+                Dodaj novi termin
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Container>
     </>
   );
 }
