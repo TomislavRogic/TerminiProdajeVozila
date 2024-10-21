@@ -5,6 +5,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Service from "../../services/TerminiService"; // Prilagođen import servisa
+import OsobaService from "../../services/OsobaService";
 import { RouteNames } from "../../constants";
 
 export default function TerminiPregled() {

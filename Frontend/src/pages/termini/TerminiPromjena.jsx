@@ -75,7 +75,7 @@ export default function TerminiPromjena() {
                     <Form.Control as="select" name="sifravozila" required defaultValue={termin.Vozila}>
     {vozila.map((vozilo) => (
         <option key={vozilo.sifravozila} value={vozilo.sifravozila}>
-            {vozilo.sifravozila}/ {vozilo.marka}/ {vozilo.opisvozila}
+           {vozilo.marka}/ {vozilo.opisvozila}
         </option>
     ))}
 </Form.Control>
