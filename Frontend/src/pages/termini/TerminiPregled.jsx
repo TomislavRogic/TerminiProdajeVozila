@@ -70,7 +70,7 @@ export default function TerminiPregled() {
                         <tr key={index}>
                             <td>{termin.vozilaMarka}</td>
                             <td>{termin.osobaIme}</td>
-                            <td>{termin.Vrijemetermina}</td>
+                            <td>{new Date(termin.Vrijemetermina).toLocaleString()}</td>
                             
                             <td className="sredina">
                                 <Button
