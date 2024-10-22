@@ -7,6 +7,11 @@ import { useNavigate } from "react-router-dom";
 import Service from "../../services/TerminiService"; // Prilagođen import servisa
 import OsobaService from "../../services/OsobaService";
 import { RouteNames } from "../../constants";
+import moment from "moment";
+
+function formatDate(dateString) {
+    return moment(dateString).format('YYYY-MM-DD');
+}
 
 export default function TerminiPregled() {
     const [termini, setTermini] = useState([]);
@@ -34,15 +39,20 @@ export default function TerminiPregled() {
             });
     }
     async function obrisiTermin(sifratermina) {
-        
+        try {
             const odgovor = await Service.obrisi(sifratermina);
             // console.log(odgovor);
             if (odgovor.greska) {
                 alert(odgovor.poruka);
                 return;
             }
-            dohvatiTermine();
-        } 
+            console.log('Termin obrisan');
+            await dohvatiTermine();
+        } catch (error) {
+            console.error("Greška pri brisanju termina:", error);
+            alert("Došlo je do greške prilikom brisanja termina.");
+        }
+    }
       
 
     useEffect(() => {
@@ -70,7 +80,7 @@ export default function TerminiPregled() {
                         <tr key={index}>
                             <td>{termin.vozilaMarka}</td>
                             <td>{termin.osobaIme}</td>
-                            <td>{new Date(termin.Vrijemetermina).toLocaleString()}</td>
+                            <td>{formatDate(termin.Vrijemetermina)}</td>
                             
                             <td className="sredina">
                                 <Button
