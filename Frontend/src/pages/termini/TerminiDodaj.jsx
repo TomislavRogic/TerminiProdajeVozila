@@ -16,17 +16,25 @@ export default function TerminiDodaj() {
 
   async function dohvatiVozila() {
     const odgovor = await VozilaService.get();
-    setVozila(odgovor.poruka);
-    if (odgovor.poruka.length > 0) {
-      setVoziloSifra(odgovor.poruka[0].sifra);
+    if (odgovor && odgovor.poruka) {
+      setVozila(odgovor.poruka);
+      if (odgovor.poruka.length > 0) {
+        setVoziloSifra(odgovor.poruka[0].sifra); // Ensure 'sifra' exists
+      }
+    } else {
+      console.error("Vozila not fetched correctly:", odgovor);
     }
   }
 
   async function dohvatiOsobe() {
     const odgovor = await OsobaService.get();
-    setOsobe(odgovor.poruka);
-    if (odgovor.poruka.length > 0) {
-      setOsobaSifra(odgovor.poruka[0].sifra);
+    if (odgovor && odgovor.poruka) {
+      setOsobe(odgovor.poruka);
+      if (odgovor.poruka.length > 0) {
+        setOsobaSifra(odgovor.poruka[0].sifra); // Ensure 'sifra' exists
+      }
+    } else {
+      console.error("Osobe not fetched correctly:", odgovor);
     }
   }
 
@@ -37,80 +45,78 @@ export default function TerminiDodaj() {
   }, []);
 
   async function dodaj(termin) {
-    console.log("Podaci koji se šalju:", termin); // Dodano za provjeru
+    console.log("Podaci koji se šalju:", termin); // For debugging
     const odgovor = await TerminiService.dodaj(termin);
     if (odgovor.greska) {
       alert(odgovor.poruka);
       return;
     }
     navigate(RouteNames.TERMINI_PREGLED);
-}
+  }
 
-function obradiSubmit(e) {
-  e.preventDefault();
-  const podaci = e.target.elements;
-  dodaj({
-    Vozila: parseInt(sifravozila), // Koristi ispravno stanje
-    Osobe: parseInt(sifraosoba),   // Koristi ispravno stanje
-    Vrijemetermina: podaci.vrijemetermina.value // Vrijeme u ispravnom formatu
-  });
-}
+  function obradiSubmit(e) {
+    e.preventDefault();
+    const podaci = e.target.elements;
+    dodaj({
+      Vozila: parseInt(sifravozila), 
+      Osobe: parseInt(sifraosoba),    
+      Vrijemetermina: podaci.vrijemetermina.value 
+    });
+  }
 
   return (
-    <>
-      <Container>
-        <h3>Dodavanje novog termina</h3>
-        <Form onSubmit={obradiSubmit}>
-          <Form.Group controlId="vozilo" className="mb-3">
-            <Form.Label>Vozilo</Form.Label>
-            <Form.Select 
-              onChange={(e) => setVoziloSifra(e.target.value)}
-              required
-            >
-              {vozila && vozila.map((v, index) => (
-                <option key={index} value={v.sifra}>
-                  {v.naziv}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-          <Form.Group controlId="osoba" className="mb-3">
-            <Form.Label>Osoba</Form.Label>
-            <Form.Select 
-              onChange={(e) => setOsobaSifra(e.target.value)}
-              required
-            >
-              {osobe && osobe.map((o, index) => (
-                <option key={index} value={o.sifra}>
-                  {o.ime} {o.prezime}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-          <Form.Group controlId="vrijemetermina" className="mb-3">
-            <Form.Label>Vrijeme termina</Form.Label>
-            <Form.Control 
-              type="datetime-local" 
-              name="vrijemetermina"
-              onChange={(e) => setVrijemeTermina(e.target.value)}
-              required 
-            />
-          </Form.Group>
-          <hr />
-          <Row>
-            <Col xs={6}>
-              <Link to={RouteNames.TERMINI_PREGLED} className="btn btn-danger siroko">
-                Odustani
-              </Link>
-            </Col>
-            <Col xs={6}>
-              <Button variant="primary" type="submit" className="siroko">
-                Dodaj novi termin
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </Container>
-    </>
+    <Container>
+      <h3>Dodavanje novog termina</h3>
+      <Form onSubmit={obradiSubmit}>
+        <Form.Group controlId="vozilo" className="mb-3">
+          <Form.Label>Vozilo</Form.Label>
+          <Form.Select
+            onChange={(e) => setVoziloSifra(e.target.value)}
+            required
+          >
+            {vozila.map((v, index) => (
+              <option key={index} value={v.sifravozila}>
+                {v.naziv}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+        <Form.Group controlId="osoba" className="mb-3">
+          <Form.Label>Osoba</Form.Label>
+          <Form.Select
+            onChange={(e) => setOsobaSifra(e.target.value)}
+            required
+          >
+            {osobe.map((o, index) => (
+              <option key={index} value={o.sifraosoba}>
+                {o.ime} {o.prezime}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+        <Form.Group controlId="vrijemetermina" className="mb-3">
+          <Form.Label>Vrijeme termina</Form.Label>
+          <Form.Control
+            type="datetime-local"
+            name="vrijemetermina"
+            onChange={(e) => setVrijemeTermina(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <hr />
+        <Row>
+          <Col xs={6}>
+            <Link to={RouteNames.TERMINI_PREGLED} className="btn btn-danger siroko">
+              Odustani
+            </Link>
+          </Col>
+          <Col xs={6}>
+            <Button variant="primary" type="submit" className="siroko">
+              Dodaj novi termin
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </Container>
   );
 }
