@@ -35,6 +35,8 @@ export default function TerminiPromjena() {
                 setVoziloSifra(terminOdgovor.poruka.sifravozila);
                 setOsobaSifra(terminOdgovor.poruka.sifraosoba);
 
+                console.log('Osobe:', osobeOdgovor.poruka); // Dodano za provjeru
+
             } catch (error) {
                 console.error("Greška pri dohvaćanju podataka:", error);
             }
