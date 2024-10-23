@@ -80,7 +80,7 @@ export default function TerminiPregled() {
                         <tr key={index}>
                             <td>{termin.vozilaMarka}</td>
                             <td>{termin.osobaIme}</td>
-                            <td>{formatDate(termin.Vrijemetermina)}</td>
+                            <td>{formatDate(termin.vrijemetermina)}</td>
                             
                             <td className="sredina">
                                 <Button
