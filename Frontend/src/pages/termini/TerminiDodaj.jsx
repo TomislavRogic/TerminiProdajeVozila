@@ -10,69 +10,76 @@ export default function TerminiDodaj() {
   const navigate = useNavigate();
   const [vozila, setVozila] = useState([]);
   const [osobe, setOsobe] = useState([]);
-  const [sifravozila, setVoziloSifra] = useState(0);
-  const [sifraosoba, setOsobaSifra] = useState(0);
+  const [sifravozila, setVoziloSifra] = useState('');
+  const [sifraosoba, setOsobaSifra] = useState('');
   const [vrijemeTermina, setVrijemeTermina] = useState('');
 
-  console.log("Inicijalno stanje vozila:", vozila);
-  //=======================================================
-  async function dohvatiVozila() {
-    const odgovor = await VozilaService.get();
-    if (odgovor && odgovor.poruka) {
-      console.log("Primljena vozina:", odgovor.poruka);
-      setVozila(prevVozila=> [...prevVozila, ...odgovor.poruka]);
-      console.log("Stanje vozila nakon postavljanja:", vozila);
-      if (odgovor.poruka.length > 0) {
-        setVoziloSifra(odgovor.poruka[0].sifra); // Ensure 'sifra' exists
-      }
-    } else {
-      console.error("Vozila not fetched correctly:", odgovor);
-    }
-  }
-  //=======================================================
-  async function dohvatiOsobe() {
-    const odgovor = await OsobaService.get();
-    if (odgovor && odgovor.poruka) {
-      setOsobe(odgovor.poruka);
-      if (odgovor.poruka.length > 0) {
-        setOsobaSifra(odgovor.poruka[0].sifra); // Ensure 'sifra' exists
-      }
-    } else {
-      console.error("Osobe not fetched correctly:", odgovor);
-    }
-  }
-
   useEffect(() => {
-    console.log("Vozila promjenjena", vozila); // For debugging
-    dohvatiVozila();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vozila]);
+    const dohvatiPodatke = async () => {
+      try {
+        const [vozilaOdgovor, osobeOdgovor] = await Promise.all([
+          VozilaService.get(),
+          OsobaService.get()
+        ]);
 
-  useEffect(() => {
-    console.log("Osobe promenjene:", osobe); // For debugging
-    dohvatiOsobe();
-  }, [osobe]);
+        if (vozilaOdgovor && !vozilaOdgovor.greska && Array.isArray(vozilaOdgovor.poruka)) {
+          setVozila(vozilaOdgovor.poruka);
+          setVoziloSifra(vozilaOdgovor.poruka?.[0]?.sifra || '');
+        }
 
-  console.log("Vozila nakon dohvata:", vozila); // For debugging
+        if (osobeOdgovor && !osobeOdgovor.greska && Array.isArray(osobeOdgovor.poruka)) {
+          setOsobe(osobeOdgovor.poruka);
+          setOsobaSifra(osobeOdgovor.poruka?.[0]?.sifraosoba || '');
+        }
 
-  async function dodaj(termin) {
+      } catch (error) {
+        console.error("Greška pri dohvaćanju podataka:", error);
+      }
+    };
+
+    dohvatiPodatke();
+  }, []);
+
+  async function dodajTermin(termin) {
     console.log("Podaci koji se šalju:", termin); // For debugging
-    const odgovor = await TerminiService.dodaj(termin);
-    if (odgovor.greska) {
-      alert(odgovor.poruka);
-      return;
+    try {
+      const odgovor = await TerminiService.dodaj(termin);
+      console.log("Odgovor servera:", odgovor); // For debugging
+      if (odgovor.greska) {
+        alert(odgovor.poruka);
+        return;
+      }
+      navigate(RouteNames.TERMINI_PREGLED);
+    } catch (error) {
+      console.error("Greška pri dodavanju termina:", error);
+      alert("Došlo je do greške pri dodavanju termina.");
     }
-    navigate(RouteNames.TERMINI_PREGLED);
   }
 
   function obradiSubmit(e) {
     e.preventDefault();
-    const podaci = e.target.elements;
-    dodaj({
-      Vozila: parseInt(sifravozila), 
-      Osobe: parseInt(sifraosoba),    
-      Vrijemetermina: podaci.vrijemetermina.value 
-    });
+    const podaci = new FormData(e.target);
+    const noviTermin = {
+      Vozila: parseInt(sifravozila, 10),
+      Osobe: parseInt(sifraosoba, 10),
+      Vrijemetermina: new Date(podaci.get('vrijemetermina'))
+    };
+
+    // Dodatne provjere
+    if (isNaN(noviTermin.Vozila) || noviTermin.Vozila < 1 || noviTermin.Vozila > 2147483647) {
+      alert("Neispravna vrijednost za šifru vozila.");
+      return;
+    }
+    if (isNaN(noviTermin.Osobe) || noviTermin.Osobe < 1 || noviTermin.Osobe > 2147483647) {
+      alert("Neispravna vrijednost za šifru osobe.");
+      return;
+    }
+
+    dodajTermin(noviTermin);
+  }
+
+  if (!vozila.length || !osobe.length) {
+    return <div>Učitavanje...</div>;
   }
 
   return (
@@ -82,12 +89,14 @@ export default function TerminiDodaj() {
         <Form.Group controlId="vozilo" className="mb-3">
           <Form.Label>Vozilo</Form.Label>
           <Form.Select
+            value={sifravozila || ''}
             onChange={(e) => setVoziloSifra(e.target.value)}
             required
           >
-            {vozila.map((v, index) => (
-              <option key={index} value={v.sifravozila}>
-                {v.naziv}
+            <option value="">Odaberite vozilo</option>
+            {vozila.map((v) => (
+              <option key={v.sifravozila} value={v.sifravozila}>
+                {v.sifravozila}
               </option>
             ))}
           </Form.Select>
@@ -95,12 +104,14 @@ export default function TerminiDodaj() {
         <Form.Group controlId="osoba" className="mb-3">
           <Form.Label>Osoba</Form.Label>
           <Form.Select
+            value={sifraosoba || ''}
             onChange={(e) => setOsobaSifra(e.target.value)}
             required
           >
-            {osobe.map((o, index) => (
-              <option key={index} value={o.sifraosoba}>
-                {o.ime} {o.prezime}
+            <option value="">Odaberite osobu</option>
+            {osobe.map((o) => (
+              <option key={o.sifraosoba} value={o.sifraosoba}>
+                {o.sifraosoba}
               </option>
             ))}
           </Form.Select>
@@ -110,6 +121,7 @@ export default function TerminiDodaj() {
           <Form.Control
             type="datetime-local"
             name="vrijemetermina"
+            value={vrijemeTermina}
             onChange={(e) => setVrijemeTermina(e.target.value)}
             required
           />
