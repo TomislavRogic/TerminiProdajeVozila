@@ -47,9 +47,9 @@ export default function VozilaDodaj() {
             </Form.Group>
 
             <Form.Group controlId="cijena">
-                <Form.Label>Cijena</Form.Label>
-                <Form.Control type="number" name="cijena" required />
-            </Form.Group>
+                    <Form.Label>Cijena</Form.Label>
+                    <Form.Control type="number" name="cijena" step="0.01" required />
+                </Form.Group>
 
            <hr/>
            <Row>
