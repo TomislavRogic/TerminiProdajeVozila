@@ -10,11 +10,13 @@ export default function TerminiPromjena() {
     const [termin, setTermin] = useState({});
     const [vozila, setVozila] = useState([]);
     const [osobe, setOsobe] = useState([]);
+    const [sifravozila, setVoziloSifra] = useState('');
+    const [sifraosoba, setOsobaSifra] = useState('');
     const navigate = useNavigate();
     const routeParams = useParams();
 
     useEffect(() => {
-        console.log('Dohvaćanje termina s šifrom:', routeParams.sifratermina); // Dodano za dijagnostiku
+        console.log('Dohvaćanje termina s šifrom:', routeParams.sifratermina);
         const dohvatiPodatke = async () => {
             try {
                 const [terminOdgovor, vozilaOdgovor, osobeOdgovor] = await Promise.all([
@@ -28,45 +30,38 @@ export default function TerminiPromjena() {
                     return;
                 }
                 setTermin(terminOdgovor.poruka);
+                setVozila(vozilaOdgovor.poruka);
+                setOsobe(osobeOdgovor.poruka);
+                setVoziloSifra(terminOdgovor.poruka.sifravozila);
+                setOsobaSifra(terminOdgovor.poruka.sifraosoba);
 
-                if (!vozilaOdgovor.greska) {
-                    setVozila(vozilaOdgovor.poruka);
-                } else {
-                    console.error("Greška pri dohvaćanju vozila:", vozilaOdgovor.poruka);
-                }
-
-                if (!osobeOdgovor.greska) {
-                    setOsobe(osobeOdgovor.poruka);
-                } else {
-                    console.error("Greška pri dohvaćanju osoba:", osobeOdgovor.poruka);
-                }
             } catch (error) {
                 console.error("Greška pri dohvaćanju podataka:", error);
             }
         };
 
         dohvatiPodatke();
-    }, []);
+    }, [routeParams.sifratermina]);
 
     async function promjena(terminZaPromjenu) {
-        console.log('Promjena termina:', terminZaPromjenu); // Dodano za dijagnostiku
+        console.log('Promjena termina:', terminZaPromjenu);
         const odgovor = await TerminiService.promjena(routeParams.sifratermina, terminZaPromjenu);
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;
         }
-        navigate(RouteNames.TERMINI_PREGLED); // Pretpostavljam da želite navigirati natrag na pregled
+        navigate(RouteNames.TERMINI_PREGLED);
     }
 
     function obradiSubmit(e) {
         e.preventDefault();
-        let podaci = new FormData(e.target);
-        let terminZaPromjenu = {
-            Vozila: parseInt(podaci.get('sifravozila')),
-            Osobe: parseInt(podaci.get('sifraosoba')),
+        const podaci = new FormData(e.target);
+        const terminZaPromjenu = {
+            Vozila: sifravozila,
+            Osobe: sifraosoba,
             vrijemetermina: podaci.get('vrijemetermina')
         };
-        console.log('Podaci za promjenu:', terminZaPromjenu); // Dodano za dijagnostiku
+        console.log('Podaci za promjenu:', terminZaPromjenu);
         promjena(terminZaPromjenu);
     }
 
@@ -80,20 +75,18 @@ export default function TerminiPromjena() {
             <Form onSubmit={obradiSubmit}>
                 <Form.Group controlId="sifravozila">
                     <Form.Label>Vozilo</Form.Label>
-                    <Form.Select name="sifravozila" defaultValue={termin.Vozila}>
-                        <option value="">Odaberite vozilo</option>
+                    <Form.Select value={sifravozila} onChange={(e) => setVoziloSifra(e.target.value)}>
                         {vozila.map(v => (
-                            <option key={v.sifra} value={v.sifra}>{v.marka} {v.model}</option>
+                            <option key={v.sifra} value={v.sifravozila}>{v.sifravozila}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>
 
                 <Form.Group controlId="sifraosoba">
                     <Form.Label>Osoba</Form.Label>
-                    <Form.Select name="sifraosoba" defaultValue={termin.Osobe}>
-                        <option value="">Odaberite osobu</option>
+                    <Form.Select value={sifraosoba} onChange={(e) => setOsobaSifra(e.target.value)}>
                         {osobe.map(o => (
-                            <option key={o.sifra} value={o.sifra}>{o.ime} {o.prezime}</option>
+                            <option key={o.sifra} value={o.sifraosoba}>{o.sifraosoba}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>

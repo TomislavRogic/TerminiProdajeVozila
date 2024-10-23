@@ -14,10 +14,14 @@ export default function TerminiDodaj() {
   const [sifraosoba, setOsobaSifra] = useState(0);
   const [vrijemeTermina, setVrijemeTermina] = useState('');
 
+  console.log("Inicijalno stanje vozila:", vozila);
+  //=======================================================
   async function dohvatiVozila() {
     const odgovor = await VozilaService.get();
     if (odgovor && odgovor.poruka) {
-      setVozila(odgovor.poruka);
+      console.log("Primljena vozina:", odgovor.poruka);
+      setVozila(prevVozila=> [...prevVozila, ...odgovor.poruka]);
+      console.log("Stanje vozila nakon postavljanja:", vozila);
       if (odgovor.poruka.length > 0) {
         setVoziloSifra(odgovor.poruka[0].sifra); // Ensure 'sifra' exists
       }
@@ -25,7 +29,7 @@ export default function TerminiDodaj() {
       console.error("Vozila not fetched correctly:", odgovor);
     }
   }
-
+  //=======================================================
   async function dohvatiOsobe() {
     const odgovor = await OsobaService.get();
     if (odgovor && odgovor.poruka) {
@@ -39,10 +43,17 @@ export default function TerminiDodaj() {
   }
 
   useEffect(() => {
+    console.log("Vozila promjenjena", vozila); // For debugging
     dohvatiVozila();
-    dohvatiOsobe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [vozila]);
+
+  useEffect(() => {
+    console.log("Osobe promenjene:", osobe); // For debugging
+    dohvatiOsobe();
+  }, [osobe]);
+
+  console.log("Vozila nakon dohvata:", vozila); // For debugging
 
   async function dodaj(termin) {
     console.log("Podaci koji se šalju:", termin); // For debugging
