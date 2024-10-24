@@ -7,11 +7,11 @@ namespace TerminiProdajeVozila.Models.DTO
 
         [Required(ErrorMessage = "Vozilo obavezno")]
         [Range(1, int.MaxValue, ErrorMessage = "{0} mora biti između {1} i {2}")]
-        int Vozila,
+        int VozilaSifra,
 
         [Required(ErrorMessage = "Osoba obavezno")]
         [Range(1, int.MaxValue, ErrorMessage = "{0} mora biti između {1} i {2}")]
-        int Osobe,
+        int OsobeSifra,
 
         [Required(ErrorMessage = "Vrijeme termina obavezno")]
        DateTime? Vrijemetermina

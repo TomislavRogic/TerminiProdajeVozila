@@ -45,7 +45,7 @@ namespace TerminiProdajeVozila.Controllers
         }
         [HttpGet]
         [Route("{sifra:int}")]
-        public ActionResult<TerminDTORead> GetBySifra(int sifra)
+        public ActionResult<TerminDTOInsertUpdate> GetBySifra(int sifra)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace TerminiProdajeVozila.Controllers
                 return NotFound(new { poruka = "Termin ne postoji u bazi" });
             }
 
-            return Ok(_mapper.Map<TerminDTORead>(termin));
+            return Ok(_mapper.Map<TerminDTOInsertUpdate>(termin));
         }
 
         [HttpPost]
@@ -85,8 +85,8 @@ namespace TerminiProdajeVozila.Controllers
             Osoba? osoba;
             try
             {
-                vozilo = _context.Vozila.Find(dto.Vozila);
-                osoba = _context.Osobe.Find(dto.Osobe);
+                vozilo = _context.Vozila.Find(dto.VozilaSifra);
+                osoba = _context.Osobe.Find(dto.OsobeSifra);
             }
             catch (Exception ex)
             {
@@ -150,8 +150,8 @@ namespace TerminiProdajeVozila.Controllers
                 Osoba? osoba;
                 try
                 {
-                    vozilo = _context.Vozila.Find(dto.Vozila);
-                    osoba = _context.Osobe.Find(dto.Osobe);
+                    vozilo = _context.Vozila.Find(dto.VozilaSifra);
+                    osoba = _context.Osobe.Find(dto.OsobeSifra);
                 }
                 catch (Exception ex)
                 {
