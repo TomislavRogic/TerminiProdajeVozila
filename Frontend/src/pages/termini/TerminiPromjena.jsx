@@ -10,8 +10,8 @@ export default function TerminiPromjena() {
     const [termin, setTermin] = useState({});
     const [vozila, setVozila] = useState([]);
     const [osobe, setOsobe] = useState([]);
-    const [sifravozila, setVoziloSifra] = useState('');
-    const [sifraosoba, setOsobaSifra] = useState('');
+    const [voziloSifra, setVoziloSifra] = useState('');
+    const [osobeSifra, setOsobaSifra] = useState('');
     const navigate = useNavigate();
     const routeParams = useParams();
 
@@ -32,8 +32,8 @@ export default function TerminiPromjena() {
                 setTermin(terminOdgovor.poruka);
                 setVozila(vozilaOdgovor.poruka);
                 setOsobe(osobeOdgovor.poruka);
-                setVoziloSifra(terminOdgovor.poruka.sifravozila);
-                setOsobaSifra(terminOdgovor.poruka.sifraosoba);
+                setVoziloSifra(terminOdgovor.poruka.vozilaSifra);
+                setOsobaSifra(terminOdgovor.poruka.osobeSifra);
 
                 console.log('Osobe:', osobeOdgovor.poruka); // Dodano za provjeru
 
@@ -77,18 +77,18 @@ export default function TerminiPromjena() {
             <Form onSubmit={obradiSubmit}>
                 <Form.Group controlId="sifravozila">
                     <Form.Label>Vozilo</Form.Label>
-                    <Form.Select value={sifravozila} onChange={(e) => setVoziloSifra(e.target.value)}>
+                    <Form.Select value={voziloSifra} onChange={(e) => setVoziloSifra(e.target.value)}>
                         {vozila.map(v => (
-                            <option key={v.sifra} value={v.sifravozila}>{v.sifravozila}</option>
+                            <option key={v.sifra} value={v.sifravozila}>{v.marka}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>
 
                 <Form.Group controlId="sifraosoba">
                     <Form.Label>Osoba</Form.Label>
-                    <Form.Select value={sifraosoba} onChange={(e) => setOsobaSifra(e.target.value)}>
+                    <Form.Select value={osobeSifra} onChange={(e) => setOsobaSifra(e.target.value)}>
                         {osobe.map(o => (
-                            <option key={o.sifra} value={o.sifraosoba}>{o.sifraosoba}</option>
+                            <option key={o.sifra} value={o.sifraosoba}>{o.ime} {o.prezime}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>

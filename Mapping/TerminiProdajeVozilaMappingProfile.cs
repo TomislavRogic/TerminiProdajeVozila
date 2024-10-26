@@ -22,11 +22,12 @@ namespace TerminiProdajeVozila.Mapping
                  .ForCtorParam("VozilaMarka", opt => opt.MapFrom(src => src.Vozilo.Marka))
             
                  .ForCtorParam("OsobaIme", opt => opt.MapFrom(src => src.Osoba.Ime + " " + src.Osoba.Prezime));
-           
+
             //CreateMap<Termin, TerminDTOInsertUpdate>().ForMember(dest => dest.Vozila, opt => opt.MapFrom(src => src.Vozila));
             CreateMap<Termin, TerminDTOInsertUpdate>()
              .ForCtorParam("VozilaSifra", opt => opt.MapFrom(src => src.Vozilo.Sifravozila))
             .ForCtorParam("OsobeSifra", opt => opt.MapFrom(src => src.Osoba.Sifraosoba));
+             
 
         }
     }
