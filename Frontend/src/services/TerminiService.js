@@ -32,7 +32,7 @@ async function obrisi(sifratermina) {
 async function dodaj(Termin) {
     try {
         const odgovor = await HttpService.post('/Termin', Termin);
-        console.log("Odgovor servera:", odgovor); // For debugging
+        console.log("Odgovor servera:", odgovor); 
         return { greska: false, poruka: odgovor.data };
     } catch (e) {
         if (e.response && e.response.status === 400) {
@@ -50,7 +50,7 @@ async function dodaj(Termin) {
 async function promjena(sifratermina, Termin) {
     try {
         const odgovor = await HttpService.put(`/Termin/${sifratermina}`, Termin);
-        console.log("Odgovor servera:", odgovor); // For debugging
+        console.log("Odgovor servera:", odgovor); 
         return { greska: false, poruka: odgovor.data };
     } catch (e) {
         if (e.response && e.response.status === 400) {
@@ -60,7 +60,7 @@ async function promjena(sifratermina, Termin) {
             }
             return { greska: true, poruka: poruke };
         } else {
-            return { greska: true, poruka: 'Termin se ne može dodati!' };
+            return { greska: true, poruka: 'Termin se ne može promjeniti!' };
         }
     }
 }

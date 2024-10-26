@@ -47,6 +47,7 @@ export default function TerminiPromjena() {
 
     async function promjena(terminZaPromjenu) {
         console.log('Promjena termina:', terminZaPromjenu);
+        //debugger;
         const odgovor = await TerminiService.promjena(routeParams.sifratermina, terminZaPromjenu);
         if (odgovor.greska) {
             alert(odgovor.poruka);
@@ -59,8 +60,8 @@ export default function TerminiPromjena() {
         e.preventDefault();
         const podaci = new FormData(e.target);
         const terminZaPromjenu = {
-            Vozila: sifravozila,
-            Osobe: sifraosoba,
+            vozilaSifra: voziloSifra,
+            osobeSifra: osobeSifra,
             vrijemetermina: podaci.get('vrijemetermina')
         };
         console.log('Podaci za promjenu:', terminZaPromjenu);
