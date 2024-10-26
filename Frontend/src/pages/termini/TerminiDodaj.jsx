@@ -41,10 +41,10 @@ export default function TerminiDodaj() {
   }, []);
 
   async function dodajTermin(termin) {
-    console.log("Podaci koji se šalju:", termin); // For debugging
+    console.log("Podaci koji se šalju:", termin); 
     try {
       const odgovor = await TerminiService.dodaj(termin);
-      console.log("Odgovor servera:", odgovor); // For debugging
+      console.log("Odgovor servera:", odgovor); 
       if (odgovor.greska) {
         alert(odgovor.poruka);
         return;
