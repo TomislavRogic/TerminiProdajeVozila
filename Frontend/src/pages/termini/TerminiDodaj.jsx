@@ -10,8 +10,8 @@ export default function TerminiDodaj() {
   const navigate = useNavigate();
   const [vozila, setVozila] = useState([]);
   const [osobe, setOsobe] = useState([]);
-  const [sifravozila, setVoziloSifra] = useState('');
-  const [sifraosoba, setOsobaSifra] = useState('');
+  const [vozilaSifra, setVoziloSifra] = useState('');
+  const [osobeSifra, setOsobaSifra] = useState('');
   const [vrijemeTermina, setVrijemeTermina] = useState('');
 
   useEffect(() => {
@@ -60,17 +60,17 @@ export default function TerminiDodaj() {
     e.preventDefault();
     const podaci = new FormData(e.target);
     const noviTermin = {
-      Vozila: parseInt(sifravozila, 10),
-      Osobe: parseInt(sifraosoba, 10),
+      vozilaSifra: parseInt(vozilaSifra, 10),
+      osobeSifra: parseInt(osobeSifra, 10),
       Vrijemetermina: new Date(podaci.get('vrijemetermina'))
     };
 
     // Dodatne provjere
-    if (isNaN(noviTermin.Vozila) || noviTermin.Vozila < 1 || noviTermin.Vozila > 2147483647) {
+    if (isNaN(noviTermin.vozilaSifra) || noviTermin.Vozila < 1 || noviTermin.vozilaSifra > 2147483647) {
       alert("Neispravna vrijednost za šifru vozila.");
       return;
     }
-    if (isNaN(noviTermin.Osobe) || noviTermin.Osobe < 1 || noviTermin.Osobe > 2147483647) {
+    if (isNaN(noviTermin.osobeSifra) || noviTermin.Osobe < 1 || noviTermin.osobeSifra > 2147483647) {
       alert("Neispravna vrijednost za šifru osobe.");
       return;
     }
@@ -89,14 +89,14 @@ export default function TerminiDodaj() {
         <Form.Group controlId="vozilo" className="mb-3">
           <Form.Label>Vozilo</Form.Label>
           <Form.Select
-            value={sifravozila || ''}
+            value={vozilaSifra || ''}
             onChange={(e) => setVoziloSifra(e.target.value)}
             required
           >
             <option value="">Odaberite vozilo</option>
             {vozila.map((v) => (
               <option key={v.sifravozila} value={v.sifravozila}>
-                {v.sifravozila}
+                {v.sifravozila}{v.marka}{v.model}
               </option>
             ))}
           </Form.Select>
@@ -104,14 +104,14 @@ export default function TerminiDodaj() {
         <Form.Group controlId="osoba" className="mb-3">
           <Form.Label>Osoba</Form.Label>
           <Form.Select
-            value={sifraosoba || ''}
+            value={osobeSifra || ''}
             onChange={(e) => setOsobaSifra(e.target.value)}
             required
           >
             <option value="">Odaberite osobu</option>
             {osobe.map((o) => (
               <option key={o.sifraosoba} value={o.sifraosoba}>
-                {o.sifraosoba}
+                {o.sifraosoba}{o.ime}{o.prezime}
               </option>
             ))}
           </Form.Select>
