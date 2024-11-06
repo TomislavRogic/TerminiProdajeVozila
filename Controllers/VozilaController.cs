@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TerminiProdajeVozila.Data;
 using TerminiProdajeVozila.Models;
 using TerminiProdajeVozila.Models.DTO;
@@ -140,5 +141,63 @@ namespace TerminiProdajeVozila.Controllers
                 return BadRequest(new { poruka = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("trazi/{uvjet}")]
+        public ActionResult<List<VozilaDTORead>> TraziVozilo(string uvjet)
+        {
+            if (uvjet == null || uvjet.Length < 3)
+            {
+                return BadRequest(ModelState);
+            }
+            uvjet = uvjet.ToLower();
+            try
+            {
+                IEnumerable<Vozilo> query = _context.Vozila;
+                var niz = uvjet.Split(" ");
+                foreach (var s in uvjet.Split(" "))
+                {
+                    query = query.Where(p => p.Marka.ToLower().Contains(s) || p.Opisvozila.ToLower().Contains(s));
+
+                }
+                var vozila = query.ToList();
+                return Ok(_mapper.Map<List<VozilaDTORead>>(vozila));
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { poruka = e.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("traziStranicenje/{stranica}")]
+        public IActionResult TraziVoziloStranicenje (int stranica, string uvjet = "")
+
+        {
+            var poStranici = 4;
+            uvjet = uvjet.ToLower();
+            try
+            {
+                var vozila = _context.Vozila
+                    .Where(p => EF.Functions.Like(p.Marka.ToLower(), "%" + uvjet + "%") 
+                    || EF.Functions.Like(p.Opisvozila.ToLower(), "%" + uvjet + "%"))
+                    .Skip((poStranici * stranica) - poStranici)
+                    .Take(poStranici)
+                    .OrderBy(p => p.Marka)
+                    .ToList();
+
+                return Ok(_mapper.Map<List<VozilaDTORead>>(vozila));
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest( e.Message );
+            }
+        }
+        
+
+
     }
 }

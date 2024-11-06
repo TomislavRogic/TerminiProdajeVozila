@@ -67,10 +67,30 @@ async function promjena(sifra, vozilo) {
     }
 }
 
+
+async function traziVozilo(uvjet) {
+    return await HttpService.get('/Vozila/trazi/'+uvjet)
+    .then((odgovor)=>{
+        //console.table(odgovor.data);
+        return {greska: false, poruka: odgovor.data}
+    })
+    .catch((e)=>{return {greska: true, poruka: 'Problem kod traženja vozila'}})
+}
+
+async function getStranicenje(stranica,uvjet){
+    return await HttpService.get('/Vozila/traziStranicenje/'+stranica + '?uvjet=' + uvjet)
+    .then((odgovor)=>{return  {greska: false, poruka: odgovor.data};})
+    .catch((e)=>{ return {greska: true, poruka: 'Problem kod traženja polaznika '}});
+  }
+
+
+
 export default {
     get,
     getBySifra,
     obrisi,
     dodaj,
-    promjena
+    promjena,
+    traziVozilo,
+    getStranicenje
 };

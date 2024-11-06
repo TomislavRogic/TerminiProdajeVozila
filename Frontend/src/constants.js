@@ -17,4 +17,6 @@ TERMINI_PROMJENA: '/termini/:sifratermina'
 
 }
 
-export const BACKEND_URL='https://tomislavrogic-001-site1.ftempurl.com/api/v1'
+export const APP_URL='https://tomislavrogic-001-site1.ftempurl.com'
+
+export const BACKEND_URL= APP_URL + '/api/v1'
