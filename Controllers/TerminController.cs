@@ -297,5 +297,57 @@ namespace TerminiProdajeVozila.Controllers
                 return BadRequest(new { poruka = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("trazi/{uvjet}")]
+        public ActionResult<List<TerminDTORead>> TraziTermin(string uvjet)
+        {
+            if (uvjet == null || uvjet.Length < 3)
+            {
+                return BadRequest(ModelState);
+            }
+            uvjet = uvjet.ToLower();
+            try
+            {
+                IEnumerable<Termin> query = _context.Termini;
+                var niz = uvjet.Split(" ");
+                foreach (var s in uvjet.Split(" "))
+                {
+                    query = query.Where(p => p.Vozilo.Marka.ToLower().Contains(s) || p.Osoba.Ime.ToLower().Contains(s) || p.Osoba.Prezime.ToLower().Contains(s));
+                }
+                var termini = query.ToList();
+                return Ok(_mapper.Map<List<TerminDTORead>>(termini));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { poruka = e.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("traziStranicenje/{stranica}")]
+        public IActionResult TraziTerminStranicenje(int stranica, string uvjet = "")
+        {
+            var poStranici = 4;
+            uvjet = uvjet.ToLower();
+            try
+            {
+                var termini = _context.Termini
+                 .Where(p => EF.Functions.Like(p.Vozilo.Marka.ToLower(), "%" + uvjet + "%")
+                 || EF.Functions.Like(p.Osoba.Ime.ToLower(), "%" + uvjet + "%")
+                 || EF.Functions.Like(p.Osoba.Prezime.ToLower(), "%" + uvjet + "%"))
+                 .Skip((poStranici * stranica) - poStranici)
+                 .Take(poStranici)
+                 .OrderBy(p => p.Vozilo.Marka)
+                 .ToList();
+
+                return Ok(_mapper.Map<List<TerminDTORead>>(termini));
+            }
+            catch (Exception e)
+            {
+                return BadRequest( e.Message );
+            }
+        }
+
     }
 }

@@ -65,10 +65,28 @@ async function promjena(sifratermina, Termin) {
     }
 }
 
+async function traziTermin(uvjet){
+    return await HttpService.get('/Termin/trazi/' + uvjet)
+    .then((odgovor) => {
+        return {greska: false, poruka: odgovor.data};
+    })
+    .catch((e) => {return {greska: true, poruka:'Problem kod traženja termina'}});
+}
+
+
+async function getStranicenje(stranica, uvjet) {
+    return await HttpService.get('/Termin/traziStranicenje/'+stranica + '?uvjet=' + uvjet)
+    .then((odgovor) => {return { greska: false, poruka: odgovor.data };})
+    .catch((e) => { return { greska: true, poruka: 'Problem kod traženja termina' }})
+    };
+
+
 export default {
     get,
     getBySifra,
     obrisi,
     dodaj,
-    promjena
+    promjena, 
+    traziTermin,
+    getStranicenje
 };
