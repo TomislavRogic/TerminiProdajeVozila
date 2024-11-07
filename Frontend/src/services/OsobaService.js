@@ -69,10 +69,28 @@ async function getBySifra(sifra) {
         });
 }
 
+async function traziOsoba(uvjet){
+    return await HttpService.get('/Osoba/trazi/' + uvjet)
+    .then((odgovor) =>{
+        //console.table(odgovor.data);
+        return {greska: false, poruka: odgovor.data}
+    })
+    .catch((e)=>{return {greska:true, poruka: 'Problem kod traženja osobe'}});
+}
+
+async function getStranicenje(stranica, uvjet) {
+    return await HttpService.get('/Osoba/traziStranicenje/'+stranica + '?uvjet=' + uvjet)
+    .then((odgovor)=>{return  {greska: false, poruka: odgovor.data};})
+    .catch((e)=>{ return {greska: true, poruka: 'Problem kod traženja osobe '}});
+  }
+
+
 export default {
     get,
     brisanje,
     dodaj,
     getBySifra,
-    promjena
+    promjena,
+    traziOsoba,
+    getStranicenje
 };

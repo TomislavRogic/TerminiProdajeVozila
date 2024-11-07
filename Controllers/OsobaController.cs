@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TerminiProdajeVozila.Data;
 using TerminiProdajeVozila.Models;
 using TerminiProdajeVozila.Models.DTO;
@@ -138,6 +139,56 @@ namespace TerminiProdajeVozila.Controllers
                 return BadRequest(new { poruka = ex.Message });
             }
 
+        }
+
+        [HttpGet]
+        [Route("trazi/{uvjet}")]
+        public ActionResult<List<OsobaDTORead>> TraziOsoba(string uvjet)
+        {
+            if (uvjet == null || uvjet.Length < 3)
+            {
+                return BadRequest(ModelState);
+            }
+            uvjet = uvjet.ToLower();
+            try
+            {
+                IEnumerable<Osoba> query = _context.Osobe;
+                var niz = uvjet.Split(" ");
+                foreach (var s in uvjet.Split(" "))
+                {
+                    query = query.Where(p => p.Ime.ToLower().Contains(s) || p.Prezime.ToLower().Contains(s));
+                }
+                var osobe = query.ToList();
+                return Ok(_mapper.Map<List<OsobaDTORead>>(osobe));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { poruka = e.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("traziStranicenje/{stranica}")]
+        public IActionResult TraziOsobaStranicenje(int stranica, string uvjet = "")
+        {
+            var poStranici = 4;
+            uvjet = uvjet.ToLower();
+            try
+            {
+                var osobe = _context.Osobe
+                    .Where(p => EF.Functions.Like(p.Ime.ToLower(), "%" + uvjet + "%")
+                    || EF.Functions.Like(p.Prezime.ToLower(), "%" + uvjet + "%"))
+                    .Skip((poStranici * stranica) - poStranici)
+                    .Take(poStranici)
+                    .OrderBy(p => p.Prezime)
+                    .ToList();
+
+                return Ok(_mapper.Map<List<OsobaDTORead>>(osobe));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { poruka = e.Message });
+            }
         }
     }
 }
