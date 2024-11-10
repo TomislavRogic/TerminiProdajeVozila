@@ -52,8 +52,9 @@ export default function TerminiPregled() {
             setStranica(stranica - 1);
             return;
         }
-        console.log('Termini:', odgovor.poruka); // Dodano za provjeru podataka
-        setTermini(odgovor.poruka);
+        // Sortiranje termina prema datumu od najmanjeg prema najvećem
+        const sortiraniTermini = odgovor.poruka.sort((a, b) => new Date(a.vrijemetermina) - new Date(b.vrijemetermina));
+        setTermini(sortiraniTermini);
     }
 
     async function obrisiTermin(sifratermina) {
