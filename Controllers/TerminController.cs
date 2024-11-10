@@ -302,21 +302,23 @@ namespace TerminiProdajeVozila.Controllers
         [Route("trazi/{uvjet}")]
         public ActionResult<List<TerminDTORead>> TraziTermin(string uvjet)
         {
-            if (uvjet == null || uvjet.Length < 3)
+            if (string.IsNullOrEmpty(uvjet) || uvjet.Length < 3)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new { poruka = "Uvjet mora imati najmanje 3 znaka." });
             }
             uvjet = uvjet.ToLower();
             try
             {
-                IEnumerable<Termin> query = _context.Termini;
-                var niz = uvjet.Split(" ");
-                foreach (var s in uvjet.Split(" "))
-                {
-                    query = query.Where(p => p.Vozilo.Marka.ToLower().Contains(s) || p.Osoba.Ime.ToLower().Contains(s) || p.Osoba.Prezime.ToLower().Contains(s));
-                }
-                var termini = query.ToList();
-                return Ok(_mapper.Map<List<TerminDTORead>>(termini));
+                var termini = _context.Termini
+                    .Include(t => t.Vozilo)
+                    .Include(t => t.Osoba)
+                    .Where(p => p.Vozilo.Marka.ToLower().Contains(uvjet)
+                        || p.Osoba.Ime.ToLower().Contains(uvjet)
+                        || p.Osoba.Prezime.ToLower().Contains(uvjet))
+                    .ToList();
+
+                var terminiDTO = _mapper.Map<List<TerminDTORead>>(termini);
+                return Ok(terminiDTO);
             }
             catch (Exception e)
             {
@@ -333,19 +335,22 @@ namespace TerminiProdajeVozila.Controllers
             try
             {
                 var termini = _context.Termini
-                 .Where(p => EF.Functions.Like(p.Vozilo.Marka.ToLower(), "%" + uvjet + "%")
-                 || EF.Functions.Like(p.Osoba.Ime.ToLower(), "%" + uvjet + "%")
-                 || EF.Functions.Like(p.Osoba.Prezime.ToLower(), "%" + uvjet + "%"))
-                 .Skip((poStranici * stranica) - poStranici)
-                 .Take(poStranici)
-                 .OrderBy(p => p.Vozilo.Marka)
-                 .ToList();
+                    .Include(t => t.Vozilo)
+                    .Include(t => t.Osoba)
+                    .Where(p => EF.Functions.Like(p.Vozilo.Marka.ToLower(), "%" + uvjet + "%")
+                        || EF.Functions.Like(p.Osoba.Ime.ToLower(), "%" + uvjet + "%")
+                        || EF.Functions.Like(p.Osoba.Prezime.ToLower(), "%" + uvjet + "%"))
+                    .Skip((poStranici * stranica) - poStranici)
+                    .Take(poStranici)
+                    .OrderBy(p => p.Vozilo.Marka)
+                    .ToList();
 
-                return Ok(_mapper.Map<List<TerminDTORead>>(termini));
+                var terminiDTO = _mapper.Map<List<TerminDTORead>>(termini);
+                return Ok(terminiDTO);
             }
             catch (Exception e)
             {
-                return BadRequest( e.Message );
+                return BadRequest(new { poruka = e.Message });
             }
         }
 
