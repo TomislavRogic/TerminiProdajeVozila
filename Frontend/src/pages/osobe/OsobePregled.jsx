@@ -20,6 +20,10 @@ export default function OsobePregled() {
             alert(odgovor.poruka);
             return;
         }
+        if (odgovor.poruka.length == 0) {
+            setStranica(stranica - 1);
+            return;
+        }
         setOsobe(odgovor.poruka);
     }
 
