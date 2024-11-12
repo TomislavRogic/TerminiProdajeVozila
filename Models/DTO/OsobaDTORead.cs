@@ -1,9 +1,10 @@
 ﻿namespace TerminiProdajeVozila.Models.DTO
 {
     public record OsobaDTORead(
-        int Sifraosoba,
+        int? Sifraosoba,
         string Email,
         string Ime,
-        string Prezime
+        string Prezime,
+        string? Slika
     );
 }

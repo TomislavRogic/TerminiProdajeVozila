@@ -190,5 +190,43 @@ namespace TerminiProdajeVozila.Controllers
                 return BadRequest(new { poruka = e.Message });
             }
         }
+
+        [HttpPut]
+        [Route("postaviSliku/{id:int}")]
+        public IActionResult PostaviSliku(int id, SlikaDTO slika)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Šifra mora biti veća od nula (0)");
+            }
+            if (slika.Base64 == null || slika.Base64?.Length == 0)
+            {
+                return BadRequest("Slika nije postavljena");
+            }
+            var osoba = _context.Osobe.Find(id);
+            if (osoba == null)
+            {
+                return BadRequest("Ne postoji osoba s sifrom" + id + ".");
+            }
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+                string dir = Path.Combine(Directory.GetCurrentDirectory()
+                    + ds + "wwwroot" + ds + "slike" + ds + "osobe");
+                if (!System.IO.Directory.Exists(dir))
+                {
+
+                   System.IO.Directory.CreateDirectory(dir);
+                }
+                var putanja = Path.Combine(dir + ds + id + ".png");
+                System.IO.File.WriteAllBytes(putanja, Convert.FromBase64String(slika.Base64!));
+                return Ok("Uspješno pohranjena slika");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }
