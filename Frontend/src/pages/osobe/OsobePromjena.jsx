@@ -19,6 +19,10 @@ export default function OsobePromjena() {
     const [slikaZaServer, setSlikaZaServer] = useState('');
     const cropperRef = useRef(null);
 
+    // fiksne dimenzije slike
+    const dimenzije = { width: 200, height: 300 };
+
+
 
     async function dohvatiOsoba() {
         showLoading(); // Dodano za dijagnostiku
