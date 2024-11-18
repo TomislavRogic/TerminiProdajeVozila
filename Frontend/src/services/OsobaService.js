@@ -84,6 +84,12 @@ async function getStranicenje(stranica, uvjet) {
     .catch((e)=>{ return {greska: true, poruka: 'Problem kod traženja osobe '}});
   }
 
+  async function postaviSliku(sifra, slika){
+    return await HttpService.put('/Osoba/postaviSliku/' + sifra, slika)
+    .then((odgovor)=>{return {greska: false, poruka: odgovor.data};})
+    .catch((e)=>{return {greska: true, poruka: 'Problem kod postavljanja slike osobe'}});
+  }
+
 
 export default {
     get,
@@ -92,5 +98,6 @@ export default {
     getBySifra,
     promjena,
     traziOsoba,
-    getStranicenje
+    getStranicenje,
+    postaviSliku
 };
