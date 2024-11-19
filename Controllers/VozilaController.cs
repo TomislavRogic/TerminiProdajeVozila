@@ -196,6 +196,43 @@ namespace TerminiProdajeVozila.Controllers
                 return BadRequest( e.Message );
             }
         }
+
+        [HttpPut]
+        [Route("postaviSliku/{Sifravozila:int}")]
+        public IActionResult PostaviSliku(int Sifravozila, SlikaDTO slika)
+        {
+            if (Sifravozila <= 0)
+            {
+                return BadRequest("Šifra mora biti veća od nula (0)");
+            }
+            if (slika.Base64 == null || slika.Base64?.Length == 0)
+            {
+                return BadRequest("Slika nije postavljena");
+            }
+            var vozila = _context.Vozila.Find(Sifravozila);
+            if (vozila == null)
+            {
+                return BadRequest("Ne postoji vozilo s šifrom" + Sifravozila + ".");
+            }
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+                string dir = Path.Combine(Directory.GetCurrentDirectory()
+                    + ds + "wwwroot" + ds + "slike" + ds + "vozila");
+
+                if (!System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
+                var putanja = Path.Combine(dir + ds + Sifravozila + ".png");
+                System.IO.File.WriteAllBytes(putanja, Convert.FromBase64String(slika.Base64));
+                return Ok("Uspješno pohranjena slika");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
         
 
 

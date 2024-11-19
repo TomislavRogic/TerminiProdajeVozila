@@ -23,7 +23,14 @@ namespace TerminiProdajeVozila.Mapping
             CreateMap<OsobaDTOInsertUpdate, Osoba>();
 
             // Mapiranje za Vozila
-            CreateMap<Vozilo, VozilaDTORead>();
+            CreateMap<Vozilo, VozilaDTORead>()
+            .ConstructUsing(entitet =>
+                new VozilaDTORead(
+                    entitet.Sifravozila,
+                    entitet.Marka ?? "",
+                    entitet.Opisvozila ?? "",
+                    entitet.Cijena,
+                    PutanjaDatoteke(entitet)));
             CreateMap<VozilaDTOInsertUpdate, Vozilo>();
 
             // Mapiranje za Termin
@@ -55,9 +62,22 @@ namespace TerminiProdajeVozila.Mapping
             }
             }
 
+        private static string? PutanjaDatoteke(Vozilo f)
+        {
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+                string slika = Path.Combine(Directory.GetCurrentDirectory()
+                    + ds + "wwwroot" + ds + "slike" + ds + "vozila" + ds + f.Sifravozila + ".png");
+                return File.Exists(slika) ? "/slike/vozila/" + f.Sifravozila + ".png" : null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
 
-        
     }
 
 }
