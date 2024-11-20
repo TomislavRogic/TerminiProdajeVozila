@@ -80,7 +80,13 @@ async function traziVozilo(uvjet) {
 async function getStranicenje(stranica,uvjet){
     return await HttpService.get('/Vozila/traziStranicenje/'+stranica + '?uvjet=' + uvjet)
     .then((odgovor)=>{return  {greska: false, poruka: odgovor.data};})
-    .catch((e)=>{ return {greska: true, poruka: 'Problem kod traženja polaznika '}});
+    .catch((e)=>{ return {greska: true, poruka: 'Problem kod traženja vozila '}});
+  }
+
+  async function postaviSliku(sifra, slika){
+    return await HttpService.put('/Vozila/postaviSliku/' + sifra, slika)
+    .then((odgovor)=>{return {greska:false, poruka: odgovor.data};})
+    .catch((e)=>{return {greska: true, poruka: 'Problem kod postavljanja slike vozila ' }})
   }
 
 
@@ -92,5 +98,6 @@ export default {
     dodaj,
     promjena,
     traziVozilo,
-    getStranicenje
+    getStranicenje,
+    postaviSliku
 };
