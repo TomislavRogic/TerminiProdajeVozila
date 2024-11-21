@@ -1,10 +1,11 @@
 ﻿namespace TerminiProdajeVozila.Models.DTO
 {
     public record TerminDTORead(
-        int Sifratermina,
+        int? Sifratermina,
         string? VozilaMarka,
         string? OsobaIme,
         
-        DateTime Vrijemetermina
+        DateTime Vrijemetermina,
+        string? Slika
     );
 }
