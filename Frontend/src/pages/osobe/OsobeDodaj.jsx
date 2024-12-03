@@ -2,12 +2,16 @@ import OsobaService from "../../services/OsobaService";
 import { Button, Row, Col, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
+import useLoading from "../../hooks/useLoading";
 
 export default function OsobeDodaj() {
     const navigate = useNavigate();
+    const { showLoading, hideLoading } = useLoading();
 
     async function dodaj(osoba) {
+        showLoading();
         const odgovor = await OsobaService.dodaj(osoba);
+        hideLoading();
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;

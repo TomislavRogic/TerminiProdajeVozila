@@ -6,6 +6,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import skicaosoba from '../../assets/skicaosoba.png';
 import { APP_URL, RouteNames } from "../../constants";
 import { Link} from "react-router-dom";
+import useLoading from "../../hooks/useLoading";
 
 
 export default function OsobePregled() {
@@ -13,9 +14,14 @@ export default function OsobePregled() {
     const [osobe, setOsobe] = useState([]);
     const [stranica, setStranica] = useState(1);
     const [uvjet, setUvjet] = useState('');
+    const {showLoading, hideLoading}=useLoading();
 
     async function dohvatiOsobe() {
+
+        showLoading();
         const odgovor = await OsobaService.getStranicenje(stranica, uvjet);
+        hideLoading();
+
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;
@@ -42,6 +48,8 @@ export default function OsobePregled() {
     async function brisanjeOsoba(sifraosoba) {
         console.log('Poziv API-ja za brisanje s šifrom:', sifraosoba); // Dodano za dijagnostiku
         const odgovor = await OsobaService.brisanje(sifraosoba);
+        showLoading();
+        hideLoading();
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;
@@ -110,7 +118,7 @@ export default function OsobePregled() {
                     </Link>
                 </Col>
             </Row>
-
+           
             <Row>
             { osobe && osobe.map((osoba) => (
                 <Col key={osoba.sifraosoba} sm={12} lg={3} md={3}>
