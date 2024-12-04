@@ -6,16 +6,19 @@ import VozilaService from "../../services/VozilaService";
 import skicavozila from '../../assets/skicavozila.png'; 
 import { IoIosAdd } from "react-icons/io";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import useLoading from "../../hooks/useLoading";
 
 export default function VozilaPregled() {
     const [vozila, setVozila] = useState([]);
     const [stranica, setStranica] = useState(1);
     const [uvjet, setUvjet] = useState('');
+    const {showLoading, hideLoading}=useLoading();
 
     async function dohvatiVozila() {
+        showLoading();
     
             const odgovor = await VozilaService.getStranicenje(stranica, uvjet);
-            
+            hideLoading();
             if(odgovor.greska){
                 alert(odgovor.poruka);
 
@@ -34,7 +37,9 @@ export default function VozilaPregled() {
     }, [stranica, uvjet]);
 
     async function obrisiAsync(sifravozila) {
+        showLoading();
         const odgovor = await VozilaService.obrisi(sifravozila);
+        hideLoading();
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;

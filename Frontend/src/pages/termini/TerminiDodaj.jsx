@@ -5,6 +5,7 @@ import TerminiService from '../../services/TerminiService';
 import VozilaService from '../../services/VozilaService';
 import OsobaService from '../../services/OsobaService';
 import { RouteNames } from '../../constants';
+import useLoading from '../../hooks/useLoading';
 
 export default function TerminiDodaj() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export default function TerminiDodaj() {
   const [vozilaSifra, setVoziloSifra] = useState('');
   const [osobeSifra, setOsobaSifra] = useState('');
   const [vrijemeTermina, setVrijemeTermina] = useState('');
+  const {showLoading, hideLoading}= useLoading();
+  
 
   useEffect(() => {
     const dohvatiPodatke = async () => {
@@ -41,7 +44,9 @@ export default function TerminiDodaj() {
   }, []);
 
   async function dodajTermin(termin) {
+    showLoading();
     console.log("Podaci koji se šalju:", termin); 
+    hideLoading();
     try {
       const odgovor = await TerminiService.dodaj(termin);
       console.log("Odgovor servera:", odgovor); 

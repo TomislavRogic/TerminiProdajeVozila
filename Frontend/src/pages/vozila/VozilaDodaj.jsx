@@ -2,13 +2,18 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { RouteNames } from "../../constants";
 import VozilaService from "../../services/VozilaService";
+import useLoading from "../../hooks/useLoading";
+
 
 
 export default function VozilaDodaj() {
     const navigate = useNavigate();
+    const {showLoading, hideLoading}= useLoading();
 
     async function dodaj(e) {
+        showLoading();
         const odgovor = await VozilaService.dodaj(e);
+        hideLoading();
         if(odgovor.greska) {
             alert(odgovor.poruka);
             return;

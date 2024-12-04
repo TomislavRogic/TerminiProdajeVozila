@@ -10,6 +10,7 @@ import VozilaService from "../../services/VozilaService";
 import OsobaService from "../../services/OsobaService";
 import { RouteNames } from "../../constants";
 import moment from "moment-timezone";
+import useLoading from "../../hooks/useLoading";
 
 function formatDate(dateString) {
     return moment(dateString).format('YYYY-MM-DD HH:mm');
@@ -21,9 +22,12 @@ export default function TerminiPregled() {
     const [termini, setTermini] = useState([]);
     const [stranica, setStranica] = useState(1);
     const [uvjet, setUvjet] = useState('');
+    const {showLoading, hideLoading}=useLoading();
 
     async function dohvatiVozila() {
+        showLoading();
         const odgovor = await VozilaService.get();
+        hideLoading();
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;
@@ -33,7 +37,9 @@ export default function TerminiPregled() {
     }
 
     async function dohvatiOsobe() {
+        showLoading();
         const odgovor = await OsobaService.get();
+        hideLoading();
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;
@@ -43,7 +49,9 @@ export default function TerminiPregled() {
     }
 
     async function dohvatiTermine() {
+        showLoading();
         const odgovor = await Service.getStranicenje(stranica, uvjet);
+        hideLoading();
         if (odgovor.greska) {
             alert(odgovor.poruka);
             return;
@@ -58,8 +66,10 @@ export default function TerminiPregled() {
     }
 
     async function obrisiTermin(sifratermina) {
+        showLoading();
         try {
             const odgovor = await Service.obrisi(sifratermina);
+            
             if (odgovor.greska) {
                 alert(odgovor.poruka);
                 return;
@@ -69,6 +79,8 @@ export default function TerminiPregled() {
         } catch (error) {
             console.error("Greška pri brisanju termina:", error);
             alert("Došlo je do greške prilikom brisanja termina.");
+        } finally {
+            hideLoading();
         }
     }
 
